@@ -16,7 +16,7 @@ const parser = new XMLParser({ ignoreAttributes: false });
 
 async function analyzeBatchWithAI(newsItems: { title: string; description: string; link: string }[]) {
   try {
-    if (newsItems.length === 0) return [];
+    if (newsItems.length === 0) return new Map();
 
     const formattedNews = newsItems
       .map((item, index) => `#${index + 1} Title: ${item.title}\nDescription: ${item.description}`)
@@ -57,7 +57,7 @@ async function analyzeBatchWithAI(newsItems: { title: string; description: strin
     return relevanceResults;
   } catch (error) {
     console.error("AI Analysis Error:", error);
-    return new Map(); // Return an empty map in case of failure
+    return new Map();
   }
 }
 
@@ -94,9 +94,15 @@ async function fetchRSS(url: string) {
   }
 }
 
-// Fetch and analyze all feeds
-(async () => {
+async function fetchAllFeeds() {
+  console.log(`\n📡 Fetching news at ${new Date().toLocaleString()}\n`);
   for (const url of config.feeds) {
     await fetchRSS(url);
   }
-})();
+}
+
+// Fetch news immediately on startup
+await fetchAllFeeds();
+
+// Fetch news every hour
+setInterval(fetchAllFeeds, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 ms
