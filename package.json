@@ -5,7 +5,14 @@
   "devDependencies": {
     "@types/bun": "latest"
   },
+  "scripts": {
+    "start": "bun run index.ts"
+  },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.0.8",
+    "yaml": "^2.7.0"
   }
 }
