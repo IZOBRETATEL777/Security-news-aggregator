@@ -1,6 +1,6 @@
 feeds:
-  - https://packetstorm.news/rss/news
   - https://www.bleepingcomputer.com/feed/
+  - https://packetstorm.news/rss/news
 
 topics:
   - Ransomware Attacks
