@@ -16,7 +16,6 @@ const config = yamlSchema.parse(parse(buffer));
 const topicsJoined = config.topics.join("\n");
 
 async function main() {
-    console.log(config.feeds)
     for (const url of config.feeds) {
 
         const rss = await fetchRSS(url);
@@ -32,7 +31,6 @@ async function main() {
             })
             .filter(e => Boolean(e));
 
-        console.log(relevantResults)
         const final: Record<string, News> = {}
         
         relevantResults.forEach(e => {
