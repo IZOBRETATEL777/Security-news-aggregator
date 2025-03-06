@@ -1,7 +1,7 @@
 import { parse } from "yaml";
-import { set, z } from "zod";
+import { z } from "zod";
 import { fetchRSS } from "./rss";
-import { kv, newsSchema, type News } from "./db";
+import { createNewsSchema, kv, newsFactory, newsSchema, type News } from "./db";
 import { complete } from "./ai";
 
 const yamlSchema = z.object({
@@ -16,49 +16,52 @@ const config = yamlSchema.parse(parse(buffer));
 const topicsJoined = config.topics.join("\n");
 
 async function main() {
+    // Fetch news from RSS feeds to one array
+    const news: News[] = [];
     for (const url of config.feeds) {
-
         const rss = await fetchRSS(url);
+        for (const item of rss.items) {
+            const res = createNewsSchema.safeParse(item);
 
-        const news = newsSchema.array().parse(rss.items);
+            if (!res.success) {
+                console.error(res.error.flatten().fieldErrors);
+                continue;
+            };
 
-        const result = await complete(news, topicsJoined);
-
-        const relevantResults = result
-            .map(e => {
-                const hasher = new Bun.SHA256();
-                return ({ ...e, hash: hasher.update(`${e.title} ${e.link}`).digest('hex') })
-            })
-            .filter(e => Boolean(e));
-
-        const final: Record<string, News> = {}
-        
-        relevantResults.forEach(e => {
-            final[e.hash] = e;
-        });
-
-        await kv.hset(`news:${url}`, final);
+            const newsItem = newsFactory(res.data);
+            news.push(newsItem);
+        }
     }
+
+    const result = await complete(news, topicsJoined);
+
+    // Save the news items to the database
+    const grouped = result.reduce((acc, item) => {
+        acc[item.hash] = item;
+        return acc;
+    }, {} as Record<string, News>);
+    
+    await kv.hset("news", grouped);
+
 }
 
-await main();
+main().then((data) => console.log(data));
 setInterval(main, 1000 * 60 * 60);
 
-
 const server = Bun.serve({
-    port: Bun.env.PORT || 3000,
-    fetch(req) {
-        const url = new URL(req.url);
-
-        if (url.pathname === "/health") {
-            return new Response(JSON.stringify({ status: "ok", timestamp: new Date().toISOString() }), {
-                headers: { "Content-Type": "application/json" },
-                status: 200,
-            });
-        }
-
+    routes: {
+        "/health": {
+            async GET(req) {
+                return Response.json({
+                    status: "ok",
+                    timestamp: new Date().toISOString(),
+                })
+            }
+        },
+    },
+    fetch() {
         return new Response("Not Found", { status: 404 });
     },
 });
 
-console.log(`🚀 Health check running on http://${Bun.env.HOST || '0.0.0.0'}:${server.port}/health`);
+console.log(`🚀 Health check running on ${server.url.href}health`);

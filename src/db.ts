@@ -4,34 +4,16 @@ import { z } from "zod";
 export const kv = Redis.fromEnv();
 
 export const newsSchema = z.object({
+    id: z.string().uuid(),
     title: z.string(),
     link: z.string().url(),
 });
+export const createNewsSchema = newsSchema.omit({ id: true });
 
-export type News = z.infer<typeof newsSchema>
+export type News = z.infer<typeof newsSchema>;
+export type CreateNewsDTO = z.infer<typeof createNewsSchema>;
 
-const getId = () => crypto.randomUUID();
-
-class NewsRepository {
-    constructor(private kv: Redis) {}
-
-    addNews(news: News) {
-        const id = getId();
-        const key = `news`;
-        return this.kv.hset(key, {[id]: news});
-    }
-
-    getOneNews(id: string) {
-        return this.kv.hget<News>(`news`, id);
-    }
-
-    getAllNews() {
-        return this.kv.hgetall<News>(`news`);
-    }
-
-    deleteNews(id: string) {
-        return this.kv.hdel(`news`, id);
-    }
-}
-
-export const newsRepository = new NewsRepository(kv);
+export const newsFactory = (dto: CreateNewsDTO): News => ({
+    id: crypto.randomUUID(),
+    ...dto
+});
