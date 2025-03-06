@@ -2,12 +2,7 @@ feeds:
   - https://www.bleepingcomputer.com/feed/
   - https://www.securitymagazine.com/rss/15
   - https://packetstorm.news/rss/news
-  - https://www.cshub.com/rss/categories/attacks
-  - https://www.cshub.com/rss/categories/cloud
-  - https://www.cshub.com/rss/categories/data
-  - https://www.cshub.com/rss/categories/malware
   - https://hnrss.org/frontpage
-  - https://www.stackhawk.com/feed.xml
 
 
 topics:
