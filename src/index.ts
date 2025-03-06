@@ -43,3 +43,22 @@ async function main() {
 
 await main();
 setInterval(main, 1000 * 60 * 60);
+
+
+const server = Bun.serve({
+    port: Bun.env.PORT || 3000,
+    fetch(req) {
+        const url = new URL(req.url);
+
+        if (url.pathname === "/health") {
+            return new Response(JSON.stringify({ status: "ok", timestamp: new Date().toISOString() }), {
+                headers: { "Content-Type": "application/json" },
+                status: 200,
+            });
+        }
+
+        return new Response("Not Found", { status: 404 });
+    },
+});
+
+console.log(`🚀 Health check running on http://${Bun.env.HOST || '0.0.0.0'}:${server.port}/health`);
