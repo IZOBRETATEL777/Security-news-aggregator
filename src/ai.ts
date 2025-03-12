@@ -28,7 +28,7 @@ export async function complete(newsItems: News[], topicsJoined: string) {
         schema: z.object({
             answers: z.array(
                 z.object({
-                    id: z.string().uuid().describe("ID of the news item"),
+                    id: z.string().describe("ID of the news item"),
                     keywords: z.array(z.string()).describe("Keywords of this news item"),
                 })
             )
@@ -46,12 +46,8 @@ export async function complete(newsItems: News[], topicsJoined: string) {
                 keywords: answer?.keywords || [],
             }
         }).map(item => {
-            const sha = new Bun.SHA256();
-            const hash = sha.update(`${item.link}-${item.title}`).digest("hex");
-            
             return {
                 ...item,
-                hash,
             }
         });
 }
