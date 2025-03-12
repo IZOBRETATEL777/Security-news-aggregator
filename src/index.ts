@@ -1,6 +1,6 @@
 import { parse } from "yaml";
 import { z } from "zod";
-import { fetchRSS } from "./rss";
+import { fetchRSS, fetchTodaysRSS } from "./rss";
 import { createNewsSchema, kv, newsFactory, newsSchema, type News } from "./db";
 import { complete } from "./ai";
 
@@ -19,7 +19,7 @@ async function main() {
     // Fetch news from RSS feeds to one array
     const news: News[] = [];
     for (const url of config.feeds) {
-        const rss = await fetchRSS(url);
+        const rss = await fetchTodaysRSS(url);
         for (const item of rss.items) {
             const res = createNewsSchema.safeParse(item);
 
