@@ -37,7 +37,7 @@ async function main() {
 
     // Save the news items to the database
     const grouped = result.reduce((acc, item) => {
-        acc[item.hash] = item;
+        acc[item.id] = item;
         return acc;
     }, {} as Record<string, News>);
     
@@ -45,7 +45,7 @@ async function main() {
 
 }
 
-main().then((data) => console.log(data));
+main()
 setInterval(main, 1000 * 60 * 60);
 
 const server = Bun.serve({

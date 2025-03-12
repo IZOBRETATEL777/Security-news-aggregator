@@ -14,6 +14,6 @@ export type News = z.infer<typeof newsSchema>;
 export type CreateNewsDTO = z.infer<typeof createNewsSchema>;
 
 export const newsFactory = (dto: CreateNewsDTO): News => ({
-    id: crypto.randomUUID(),
+    id: new Bun.SHA256().update(`${dto.link}-${dto.title}`).digest("hex"),
     ...dto
 });
