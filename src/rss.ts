@@ -12,3 +12,23 @@ export async function fetchRSS(url: string) {
         return { items: [] };
     }
 }
+
+export async function fetchTodaysRSS(url: string) {
+    try {
+        const response = await fetch(url);
+        const xmlData = await response.text();
+        const feed = await parser.parseString(xmlData);
+        
+        const today = new Date().toDateString();
+        
+        const todaysItems = feed.items.filter(item => {
+            if (!item.pubDate) return false;
+            const itemDate = new Date(item.pubDate).toDateString();
+            return itemDate === today;
+        });
+        return { items: todaysItems };
+    } catch (error) {
+        console.error(error);
+        return { items: [] };
+    }
+}
