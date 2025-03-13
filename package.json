@@ -8,7 +8,7 @@
     "@types/react-dom": "^19.0.4"
   },
   "scripts": {
-    "start": "bun run src/worker.ts && bun run src/server.ts",
+    "start": "bun run src/index.ts",
     "dev": "bun run --watch src/index.ts"
   },
   "peerDependencies": {

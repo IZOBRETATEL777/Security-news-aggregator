@@ -1,4 +1,4 @@
-import { kv, newsSchema, type News } from "./db";
+import { kv, newsSchema, sort, type News } from "./db";
 import { z } from "zod";
 import NewsComponent from "../components/News.tsx";
 import { processor } from "./worker.ts";
@@ -23,7 +23,7 @@ const getNews = async (): Promise<News[]> => {
         return [];
     }
 
-    return result.data;
+    return result.data.sort(sort);
 };
 
 processor();

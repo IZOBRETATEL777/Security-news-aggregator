@@ -22,8 +22,8 @@ export async function fetchTodaysRSS(url: string) {
         const today = new Date().toDateString();
         
         const todaysItems = feed.items.filter(item => {
-            if (!item.pubDate) return false;
-            const itemDate = new Date(item.pubDate).toDateString();
+            if (!item.isoDate) return false;
+            const itemDate = new Date(item.isoDate).toDateString();
             return itemDate === today;
         });
         return { items: todaysItems };
