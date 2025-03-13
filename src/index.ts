@@ -1,6 +1,7 @@
 import { kv, newsSchema, type News } from "./db";
 import { z } from "zod";
 import NewsComponent from "../components/News.tsx";
+import { processor } from "./worker.ts";
 
 const entry = await Bun.file('./index.html').text();
 
@@ -24,6 +25,9 @@ const getNews = async (): Promise<News[]> => {
 
     return result.data;
 };
+
+processor();
+setInterval(processor, 1000 * 60 * 60);
 
 const server = Bun.serve({
     idleTimeout: 20,
@@ -50,6 +54,14 @@ const server = Bun.serve({
                     }
                 });
             },
+        },
+        "/health": {
+            async GET() {
+                return Response.json({
+                    status: "ok",
+                    timestamp: new Date().toISOString(),
+                })
+            }
         },
     },
     fetch() {
