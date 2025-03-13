@@ -4,7 +4,7 @@ import { z } from "zod";
 export const kv = Redis.fromEnv();
 
 export const newsSchema = z.object({
-    id: z.string().uuid(),
+    id: z.string(),
     title: z.string(),
     link: z.string().url(),
 });

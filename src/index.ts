@@ -1,62 +1,55 @@
-import { parse } from "yaml";
+import { kv, newsSchema, type News } from "./db";
 import { z } from "zod";
-import { fetchRSS, fetchTodaysRSS } from "./rss";
-import { createNewsSchema, kv, newsFactory, newsSchema, type News } from "./db";
-import { complete } from "./ai";
+import NewsComponent from "../components/News.tsx";
 
-const yamlSchema = z.object({
-    topics: z.array(z.string()).min(1),
-    feeds: z.array(z.string()).min(1),
-});
+const entry = await Bun.file('./index.html').text();
 
-const configPath = "./config.yaml";
-const buffer = await Bun.file(configPath).text();
-const config = yamlSchema.parse(parse(buffer));
+const [part1, part2] = entry.split("<!--entry-->");
 
-const topicsJoined = config.topics.join("\n");
+const getNews = async (): Promise<News[]> => {
+    const newsData = await kv.hgetall("news");
 
-async function main() {
-    // Fetch news from RSS feeds to one array
-    const news: News[] = [];
-    for (const url of config.feeds) {
-        const rss = await fetchTodaysRSS(url);
-        for (const item of rss.items) {
-            const res = createNewsSchema.safeParse(item);
+    if (!newsData) return [];
 
-            if (!res.success) {
-                console.error(res.error.flatten().fieldErrors);
-                continue;
-            };
+    const newsArray = Object.entries(newsData).map(([key, value]) => ({
+        id: key,
+        ...(typeof value === "string" ? JSON.parse(value) : value),
+    }));
 
-            const newsItem = newsFactory(res.data);
-            news.push(newsItem);
-        }
+    const result = z.array(newsSchema).safeParse(newsArray);
+    if (!result.success) {
+        console.error("News data validation failed:", result.error.format());
+        return [];
     }
 
-    const result = await complete(news, topicsJoined);
-
-    // Save the news items to the database
-    const grouped = result.reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-    }, {} as Record<string, News>);
-    
-    await kv.hset("news", grouped);
-
-}
-
-main()
-setInterval(main, 1000 * 60 * 60);
+    return result.data;
+};
 
 const server = Bun.serve({
+    idleTimeout: 20,
     routes: {
-        "/health": {
-            async GET(req) {
-                return Response.json({
-                    status: "ok",
-                    timestamp: new Date().toISOString(),
-                })
-            }
+        "/": {
+            async GET() {
+                const readableStream = new ReadableStream({
+                    async start(controller) {
+                        controller.enqueue(part1);
+                        controller.enqueue(`<tr id="loader"> <td>Loading...</td> </tr>`);
+                        const news = await getNews();
+                        const newss = NewsComponent({ news }).join("\n");
+                        controller.enqueue(newss);
+                        controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
+                        controller.enqueue(part2);
+                        controller.close();
+                    },
+                });
+
+                return new Response(readableStream, {
+                    headers: {
+                        "Content-Type": "text/html",
+                        "Cache-Control": "no-cache"
+                    }
+                });
+            },
         },
     },
     fetch() {
@@ -64,4 +57,4 @@ const server = Bun.serve({
     },
 });
 
-console.log(`🚀 Health check running on ${server.url.href}health`);
+console.log(`🚀 Bun server running on ${server.url.href}`);
