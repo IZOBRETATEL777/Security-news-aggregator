@@ -15,7 +15,7 @@ const config = yamlSchema.parse(parse(buffer));
 
 const topicsJoined = config.topics.join("\n");
 
-async function main() {
+export async function processor() {
     // Fetch news from RSS feeds to one array
     const news: News[] = [];
     for (const url of config.feeds) {
@@ -44,25 +44,3 @@ async function main() {
     await kv.hset("news", grouped);
 
 }
-
-main()
-setInterval(main, 1000 * 60 * 60);
-
-const server = Bun.serve({
-    port: 9090,
-    routes: {
-        "/health": {
-            async GET(req) {
-                return Response.json({
-                    status: "ok",
-                    timestamp: new Date().toISOString(),
-                })
-            }
-        },
-    },
-    fetch() {
-        return new Response("Not Found", { status: 404 });
-    },
-});
-
-console.log(`🚀 Health check running on ${server.url.href}health`);
