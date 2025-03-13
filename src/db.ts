@@ -7,7 +7,15 @@ export const newsSchema = z.object({
     id: z.string(),
     title: z.string(),
     link: z.string().url(),
+    isoDate: z.string().datetime()
 });
+
+export function sort(a: News, b: News) {
+    const dateA = new Date(a.isoDate).getTime();
+    const dateB = new Date(b.isoDate).getTime();
+    return dateB - dateA;
+}
+
 export const createNewsSchema = newsSchema.omit({ id: true });
 
 export type News = z.infer<typeof newsSchema>;
