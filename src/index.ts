@@ -8,23 +8,28 @@ const entry = await Bun.file('./index.html').text();
 const [part1, part2] = entry.split("<!--entry-->");
 
 const getNews = async (): Promise<News[]> => {
-    const newsData = await kv.hgetall("news");
+    try {
+        const newsData = await kv.hgetall("news");
 
-    if (!newsData) return [];
+        if (!newsData) return [];
 
-    const newsArray = Object.entries(newsData).map(([key, value]) => ({
-        id: key,
-        ...(typeof value === "string" ? JSON.parse(value) : value),
-    }));
+        const newsArray = Object.entries(newsData).map(([key, value]) => ({
+            id: key,
+            ...(typeof value === "string" ? JSON.parse(value) : value),
+        }));
 
-    const result = z.array(newsSchema).safeParse(newsArray);
-    if (!result.success) {
-        console.error("News data validation failed:", result.error.format());
+        const result = z.array(newsSchema).safeParse(newsArray);
+        if (!result.success) {
+            console.error("News data validation failed:", result.error.format());
+            return [];
+        }
+
+        return result.data.sort(sort);
+    } catch (error) {
+        console.warn(error);
         return [];
     }
-
-    return result.data.sort(sort);
-};
+}
 
 processor();
 setInterval(processor, 1000 * 60 * 60);

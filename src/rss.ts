@@ -32,3 +32,24 @@ export async function fetchTodaysRSS(url: string) {
         return { items: [] };
     }
 }
+
+export async function fetchRangeDateRSS(url: string, startDate: Date, endDate: Date) {
+    try {
+        const response = await fetch(url);
+        const xmlData = await response.text();
+        const feed = await parser.parseString(xmlData);
+        
+        const start = startDate.toDateString();
+        const end = endDate.toDateString();
+        
+        const rangeItems = feed.items.filter(item => {
+            if (!item.isoDate) return false;
+            const itemDate = new Date(item.isoDate).toDateString();
+            return itemDate >= start && itemDate <= end;
+        });
+        return { items: rangeItems };
+    } catch (error) {
+        console.error(error);
+        return { items: [] };
+    }
+}
