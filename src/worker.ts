@@ -65,7 +65,7 @@ export async function processor() {
         }
     }
 
-    const result = await complete(news, topicsJoined);
+    const result = await complete(news, topicsJoined, config.max_articles || 20);
 
     // Save the news items to the database
     const grouped = result.reduce((acc, item) => {

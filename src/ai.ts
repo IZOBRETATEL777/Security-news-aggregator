@@ -5,19 +5,17 @@ import { z } from "zod";
 
 const deepseek = groq("deepseek-r1-distill-llama-70b");
 
-const NEWS_ITEMS_LIMIT = 20;
-
-const templatePrompt = (news: string, topics: string) => `
+const templatePrompt = (news: string, topics: string, newsItemLimit: number) => `
       Analyze the following news headlines and descriptions:
       ${news}
 
       Determine which news items are relevant based on the following topics:
       ${topics}
 
-      Give me top ${NEWS_ITEMS_LIMIT} IDs of news items that are relevant to the topics.
+      Give me top ${newsItemLimit} IDs of news items that are relevant to the topics.
     `
 
-export async function complete(newsItems: News[], topicsJoined: string) {
+export async function complete(newsItems: News[], topicsJoined: string, newsItemLimit: number): Promise<News[]> {
     const formattedNews = newsItems
         .map((item) => `ID:${item.id}; Title: ${item.title}`)
         .join("\n\n");
@@ -33,7 +31,7 @@ export async function complete(newsItems: News[], topicsJoined: string) {
                 })
             )
         }),
-        prompt: templatePrompt(formattedNews, topicsJoined),
+        prompt: templatePrompt(formattedNews, topicsJoined, newsItemLimit),
     })
     // Return news items whose IDs are in object.answers
     return newsItems
