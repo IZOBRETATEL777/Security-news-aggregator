@@ -6,14 +6,22 @@ import { z } from "zod";
 const deepseek = groq("deepseek-r1-distill-llama-70b");
 
 const templatePrompt = (news: string, topics: string, newsItemLimit: number) => `
-      Analyze the following news headlines and descriptions:
-      ${news}
+You are a news analyst preparing a security awareness news digest for employees. Your task is to analyze the following news headlines and descriptions:
+News Items:
+${news}
 
-      Determine which news items are relevant based on the following topics:
-      ${topics}
+Determine which news items are relevant based on the following security-related topics:
 
-      Give me top ${newsItemLimit} IDs of news items that are relevant to the topics.
-    `
+Relevant Topics:
+${topics}
+
+Requirements:
+
+Select the top ${newsItemLimit} most relevant news items based on their alignment with the specified topics.
+Exclude advertisements and promotional content.
+Focus on news that provides valuable security insights, trends, risks, incidents, or best practices.
+Return only the IDs of the top ${newsItemLimit} relevant news items.
+`
 
 export async function complete(newsItems: News[], topicsJoined: string, newsItemLimit: number): Promise<News[]> {
     const formattedNews = newsItems
