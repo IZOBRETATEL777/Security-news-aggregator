@@ -15,3 +15,12 @@ topics:
   - VS Code Extensions Security
   - Developer Tool Risks
   - Phishing attacks
+
+data_period:
+#  today
+#  this_week
+  range:
+    startDate: 2025-03-07
+    endDate: 2025-03-14
+
+max_articles: 20
