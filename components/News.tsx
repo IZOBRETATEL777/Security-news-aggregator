@@ -10,7 +10,7 @@ export default function NewsComponent({ news }: NewsProps) {
   return news.map(e=>({...e, date: new Date(e.isoDate)})).map((item) => (
     `<tr>
       <td class="text-break">${item.title}</td>
-      <td class="word-break">${item.keywords.join(' ')}</td>
+      <td class="word-break">${item.keywords.join(', ')}</td>
       <td class="word-break">${item.date.toDateString()}</td>
       <td class="word-break">
         <a
