@@ -4,22 +4,22 @@ import type { News } from "./db";
 import { z } from "zod";
 
 const templatePrompt = (news: string, topics: string, newsItemLimit: number) => `
-You are a news analyst preparing a security awareness news digest for employees. Your task is to analyze the following news headlines and descriptions:
-News Items:
-${news}
+Analyze the following news items and identify the most relevant ones based on the given security topics.
 
-Determine which news items are relevant based on the following security-related topics:
+News:${news}
 
-Relevant Topics:
-${topics}
+Topics:${topics}
 
-Requirements:
+Instructions:
 
-Select the top ${newsItemLimit} most relevant news items based on their alignment with the specified topics.
-Exclude advertisements and promotional content.
-Focus on news that provides valuable security insights, trends, risks, incidents, or best practices.
-Return only the IDs of the top ${newsItemLimit} relevant news items.
-`
+Select the top ${newsItemLimit} relevant news items.
+
+Exclude ads and promotional content.
+
+Focus on security insights, risks, incidents, and best practices.
+
+Return only the IDs of the top ${newsItemLimit} news items.
+`;
 
 export async function complete(newsItems: News[], topicsJoined: string, newsItemLimit: number, aiModel: string): Promise<News[]> {
     const formattedNews = newsItems
