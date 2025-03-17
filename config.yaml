@@ -52,9 +52,9 @@ data_period:
   # today
   # this_week
   # range:
-  #   startDate: 2025-03-10
-  #   endDate: 2025-03-16
-  previous_week
+  #   startDate: 2025-03-1
+  #   endDate: 2025-03-8
+  # previous_week
 
 max_articles: 20
 ai_model: "deepseek-r1-distill-llama-70b"
