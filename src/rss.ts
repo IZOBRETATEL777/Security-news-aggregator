@@ -1,13 +1,11 @@
 import dayjs from 'dayjs';
-import Parser from "rss-parser"
-
-const parser = new Parser()
+import { parseFeed } from '@rowanmanning/feed-parser';
 
 export async function fetchRSS(url: string) {
     try {
         const response = await fetch(url);
         const xmlData = await response.text();
-        return parser.parseString(xmlData);
+        return parseFeed(xmlData);
     } catch (error) {
         console.error(error);
         return { items: [] };
@@ -18,13 +16,13 @@ export async function fetchTodaysRSS(url: string) {
     try {
         const response = await fetch(url);
         const xmlData = await response.text();
-        const feed = await parser.parseString(xmlData);
+        const feed = parseFeed(xmlData);
         
-        const today = new Date().toDateString();
+        const today = new Date()
         
         const todaysItems = feed.items.filter(item => {
-            if (!item.isoDate) return false;
-            const itemDate = new Date(item.isoDate).toDateString();
+            if (!item.published) return false;
+            const itemDate = dayjs(item.published).toDate()
             return itemDate === today;
         });
         return { items: todaysItems };
@@ -38,11 +36,11 @@ export async function fetchRangeDateRSS(url: string, startDate: Date, endDate: D
     try {
         const response = await fetch(url);
         const xmlData = await response.text();
-        const feed = await parser.parseString(xmlData);
+        const feed = parseFeed(xmlData);
         
         const rangeItems = feed.items.filter(item => {
-            if (!item.pubDate) return false;
-            const itemDate = dayjs(item.pubDate).toDate()
+            if (!item.published) return false;
+            const itemDate = dayjs(item.published).toDate()
             return itemDate >= startDate && itemDate <= endDate;
         });
         return { items: rangeItems };

@@ -74,6 +74,8 @@ export async function processor() {
         }
     }
 
+    console.log(news);
+
     const oldNews = await getOldNews();
     news.push(...oldNews);
 
