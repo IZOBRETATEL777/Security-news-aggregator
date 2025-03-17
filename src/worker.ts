@@ -83,9 +83,9 @@ export async function processor() {
     }
 
     const oldNews = await getOldNews();
-    news.push(...oldNews);
+    const datedNews = await dated_merge(oldNews, news);
 
-    const result = await complete(news, topicsJoined, config.max_articles, config.ai_model);
+    const result = await complete(datedNews, topicsJoined, config.max_articles, config.ai_model);
 
     // Save the news items to the database
     const grouped = result.reduce((acc, item) => {
@@ -95,4 +95,27 @@ export async function processor() {
 
     await kv.hset("news", grouped);
 
+}
+
+// merge old news with new news but remove newer news in old news and remove. Remove dubplicated news
+async function dated_merge(oldNews: News[], newNews: News[]) {
+    const oldNewsMap = oldNews.reduce((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+    }, {} as Record<string, News>);
+
+    const newNewsMap = newNews.reduce((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+    }, {} as Record<string, News>);
+
+    const merged = { ...oldNewsMap, ...newNewsMap };
+
+    for (const id in oldNewsMap) {
+        if (newNewsMap[id] && new Date(oldNewsMap[id].published) < new Date(newNewsMap[id].published)) {
+            delete merged[id];
+        }
+    }
+
+    return Object.values(merged).sort();
 }
