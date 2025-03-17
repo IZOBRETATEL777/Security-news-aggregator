@@ -16,7 +16,8 @@ const yamlSchema = z.object({
             }),
         }),
         z.literal("today"),
-        z.literal("this_week")
+        z.literal("this_week"),
+        z.literal("previous_week"),
     ]),
     max_articles: z.number().int().positive().optional().default(20),
     ai_model: z.string().optional().default("deepseek-r1-distill-llama-70b"),
@@ -51,6 +52,12 @@ async function getRssFeed(url: string) {
         const today = new Date();
         const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
         const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (6 - today.getDay()));
+        return await fetchRangeDateRSS(url, start, end);
+    }
+    else if (fetchPeriod === "previous_week") {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() - 7);
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (6 - today.getDay() - 7));
         return await fetchRangeDateRSS(url, start, end);
     } else {
         return await fetchRSS(url);
