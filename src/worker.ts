@@ -18,7 +18,8 @@ const yamlSchema = z.object({
         z.literal("today"),
         z.literal("this_week")
     ]),
-    max_articles: z.number().int().positive().optional(),
+    max_articles: z.number().int().positive().optional().default(20),
+    ai_model: z.string().optional().default("deepseek-r1-distill-llama-70b"),
 });
 
 const configPath = "./config.yaml";
@@ -77,7 +78,7 @@ export async function processor() {
     const oldNews = await getOldNews();
     news.push(...oldNews);
 
-    const result = await complete(news, topicsJoined, config.max_articles || 20);
+    const result = await complete(news, topicsJoined, config.max_articles, config.ai_model);
 
     // Save the news items to the database
     const grouped = result.reduce((acc, item) => {
