@@ -13,10 +13,15 @@ const getNews = async (): Promise<News[]> => {
 
         if (!newsData) return [];
 
-        const newsArray = Object.entries(newsData).map(([key, value]) => ({
-            id: key,
-            ...(typeof value === "string" ? JSON.parse(value) : value),
-        }));
+        const newsArray = Object.entries(newsData).map(([key, value]) => {
+            const parsedValue = typeof value === "string" ? JSON.parse(value) : value;
+
+            return {
+                id: key,
+                ...parsedValue,
+                published: new Date(parsedValue.published)
+            };
+        });
 
         const result = z.array(newsSchema).safeParse(newsArray);
         if (!result.success) {
@@ -29,7 +34,7 @@ const getNews = async (): Promise<News[]> => {
         console.warn(error);
         return [];
     }
-}
+};
 
 processor();
 setInterval(processor, 1000 * 60 * 60);
