@@ -3,8 +3,6 @@ import { generateObject } from "ai";
 import type { News } from "./db";
 import { z } from "zod";
 
-const deepseek = groq("deepseek-r1-distill-llama-70b");
-
 const templatePrompt = (news: string, topics: string, newsItemLimit: number) => `
 You are a news analyst preparing a security awareness news digest for employees. Your task is to analyze the following news headlines and descriptions:
 News Items:
@@ -23,13 +21,13 @@ Focus on news that provides valuable security insights, trends, risks, incidents
 Return only the IDs of the top ${newsItemLimit} relevant news items.
 `
 
-export async function complete(newsItems: News[], topicsJoined: string, newsItemLimit: number): Promise<News[]> {
+export async function complete(newsItems: News[], topicsJoined: string, newsItemLimit: number, aiModel: string): Promise<News[]> {
     const formattedNews = newsItems
         .map((item) => `ID:${item.id}; Title: ${item.title}`)
         .join("\n\n");
 
     const { object } = await generateObject({
-        model: deepseek,
+        model: groq(aiModel),
         maxRetries: 3,
         schema: z.object({
             answers: z.array(
