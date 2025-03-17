@@ -27,6 +27,15 @@ const config = yamlSchema.parse(parse(buffer));
 
 const topicsJoined = config.topics.join("\n");
 
+
+async function getOldNews() {
+    const news = await kv.hgetall("news");
+    if (news === null) {
+        return [];
+    }
+    return Object.values(news) as News[];
+}
+
 async function getRssFeed(url: string) {
     const fetchPeriod = config.data_period;
     if (fetchPeriod === "today") {
@@ -65,6 +74,9 @@ export async function processor() {
         }
     }
 
+    const oldNews = await getOldNews();
+    news.push(...oldNews);
+
     const result = await complete(news, topicsJoined, config.max_articles || 20);
 
     // Save the news items to the database
@@ -72,7 +84,7 @@ export async function processor() {
         acc[item.id] = item;
         return acc;
     }, {} as Record<string, News>);
-    
+
     await kv.hset("news", grouped);
 
 }

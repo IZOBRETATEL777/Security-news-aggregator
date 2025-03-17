@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import Parser from "rss-parser"
 
 const parser = new Parser()
@@ -39,13 +40,10 @@ export async function fetchRangeDateRSS(url: string, startDate: Date, endDate: D
         const xmlData = await response.text();
         const feed = await parser.parseString(xmlData);
         
-        const start = startDate.toDateString();
-        const end = endDate.toDateString();
-        
         const rangeItems = feed.items.filter(item => {
-            if (!item.isoDate) return false;
-            const itemDate = new Date(item.isoDate).toDateString();
-            return itemDate >= start && itemDate <= end;
+            if (!item.pubDate) return false;
+            const itemDate = dayjs(item.pubDate).toDate()
+            return itemDate >= startDate && itemDate <= endDate;
         });
         return { items: rangeItems };
     } catch (error) {

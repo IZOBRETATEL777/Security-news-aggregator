@@ -1,8 +1,8 @@
 feeds:
   - https://www.bleepingcomputer.com/feed/
-  - https://www.securitymagazine.com/rss/15
-  - https://packetstorm.news/rss/news
-  - https://hnrss.org/frontpage
+  # - https://www.securitymagazine.com/rss/15
+  # - https://packetstorm.news/rss/news
+  # - https://hnrss.org/frontpage
 
 
 topics:
@@ -20,7 +20,7 @@ data_period:
 #  today
 #  this_week
   range:
-    startDate: 2025-03-07
-    endDate: 2025-03-14
+    startDate: 2025-03-16
+    endDate: 2025-03-17
 
 max_articles: 20
