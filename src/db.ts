@@ -12,9 +12,7 @@ export const newsSchema = z.object({
 });
 
 export function sort(a: News, b: News) {
-    const dateA = a.published.getTime();
-    const dateB = b.published.getTime();
-    return dateB - dateA;
+    return a.published > b.published ? -1 : 1;
 }
 
 export const createNewsSchema = newsSchema.omit({ id: true });
