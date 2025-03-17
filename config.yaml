@@ -51,9 +51,9 @@ topics:
 data_period:
   # today
   # this_week
-  # range:
-  #   startDate: 2025-03-01
-  #   endDate: 2025-03-08
+  range:
+    startDate: 2025-03-01
+    endDate: 2025-03-08
   # previous_week
 
 max_articles: 20
