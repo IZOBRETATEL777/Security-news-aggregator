@@ -1,26 +1,66 @@
 feeds:
   - https://www.bleepingcomputer.com/feed/
-  # - https://www.securitymagazine.com/rss/15
-  # - https://packetstorm.news/rss/news
-  # - https://hnrss.org/frontpage
+  - https://www.securitymagazine.com/rss/15
+  - https://packetstorm.news/rss/news
+  - https://hnrss.org/frontpage
 
 
 topics:
+  # Malware and Exploits
   - Ransomware Attacks
-  - Zero-Day Exploit
-  - Software Supply Chain Attack
-  - Botnet Attack
-  - Microsoft Products Vulnerability
-  - Password Spraying
-  - VS Code Extensions Security
+  - Zero-Day Exploits
+  - Malware-as-a-Service (MaaS)
+  - Botnet Attacks
+
+  # Supply Chain and Developer Security
+  - Software Supply Chain Attacks
+  - IDE Extensions Security
   - Developer Tool Risks
-  - Phishing attacks
+
+  # Enterprise & Infrastructure Security
+  - Microsoft Products Vulnerabilities
+  - SAP Security
+  - OpenText Security
+  - Palo Alto Security
+  - Cisco Security
+
+  # Authentication & Access Attacks
+  - Password Spraying
+  - Adversary-in-the-Middle (AiTM) Attacks
+
+  # Phishing and Social Engineering
+  - Phishing Attacks
+  - Social Engineering Attacks
+
+  # Cloud and API Security
+  - Cloud Security Vulnerabilities
+  - API Security Issues
+
+  # Digital and Critical Infrastructure Security
+  - Digital Infrastructure Threats
+  - Critical Infrastructure Attacks
+  - IoT & OT Security Risks
+
+  # Insider and Threat Intelligence
+  - Insider Threats
+  - Dark Web Threat Intelligence
+
+  # Emerging Technologies and AI Risks
+  - Artificial Intelligence in Cybersecurity
+  - Deepfake and Synthetic Media Attacks
+
+  # Social Media and Communication Risks
+  - Social Media and Messengers Security
+
+  # Data & Network Security
+  - Data Breaches
+
 
 data_period:
 #  today
-#  this_week
-  range:
-    startDate: 2025-03-16
-    endDate: 2025-03-17
+  this_week
+  # range:
+  #   startDate: 2025-03-16
+  #   endDate: 2025-03-17
 
 max_articles: 20
