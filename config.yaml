@@ -55,4 +55,4 @@ data_period:
     endDate: 2025-03-16
 
 max_articles: 20
-ai_model: "gemma2-9b-it"
+ai_model: "deepseek-r1-distill-llama-70b"
