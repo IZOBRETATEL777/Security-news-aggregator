@@ -4,44 +4,45 @@ feeds:
   - https://packetstorm.news/rss/news
   - https://hnrss.org/frontpage
   - https://cybersecuritynews.com/feed/
-  - https://www.cert.europa.eu/publications/security-advisories-rss
-  - https://api.msrc.microsoft.com/update-guide/rss
+  # - https://www.cert.europa.eu/publications/security-advisories-rss
+  # - https://api.msrc.microsoft.com/update-guide/rss
   - https://feeds.feedburner.com/TheHackersNews
 
 
 topics:
-  # Malware and Exploits
-  - Ransomware Attacks
-  - Zero-Day Exploits
-  - Botnet Attacks
+  # Malware & Exploits
+  - Ransomware
+  - Zero-Day
+  - Botnets
 
-  # Supply Chain and Developer Security
-  - Software Supply Chain Attacks
-  - Developer Tool Risks
+  # Supply Chain & Dev Security
+  - Supply Chain Attacks
+  - Dev Tool Risks
 
-  # Enterprise & Infrastructure Security
-  - Microsoft Products, SAP, OpenText, Palo Alto, Cisco Security
+  # Enterprise Security
+  - Microsoft, SAP, OpenText, Palo Alto, Cisco Vulnerabilities
 
-  # Authentication & Access Attacks
-  - Adversary-in-the-Middle (AiTM) Attacks
+  # Authentication Attacks
+  - AiTM Attacks
 
-  # Phishing and Social Engineering
-  - Phishing and Social Engineering Attacks
+  # Phishing & Social Engineering
+  - Phishing
+  - Social Engineering
 
-  # Cloud and API Security
-  - Cloud Security Vulnerabilities
+  # Cloud & API Security
+  - Cloud Vulnerabilities
 
-  # Digital and Critical Infrastructure Security
-  - Digital Infrastructure Threats
-  - Critical Infrastructure Attacks
-  - IoT & OT Security Risks
+  # Critical Infrastructure
+  - Digital Infrastructure
+  - Critical Infrastructure
+  - IoT & OT Risks
 
-  # Emerging Technologies and AI Risks
-  - Artificial Intelligence in Cybersecurity
-  - Deepfake and Synthetic Media Attacks
+  # AI & Emerging Tech
+  - AI in Security
+  - Deepfake Attacks
 
-  # Social Media and Communication Risks
-  - Social Media and Messengers Security
+  # Social Media & Communication
+  - Social Media Security
 
   # Data & Network Security
   - Data Breaches
