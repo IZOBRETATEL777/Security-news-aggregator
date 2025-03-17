@@ -6,14 +6,14 @@ export const kv = Redis.fromEnv();
 export const newsSchema = z.object({
     id: z.string(),
     title: z.string(),
-    link: z.string().url(),
-    isoDate: z.string().datetime(),
+    url: z.string().url(),
+    published: z.date(),
     keywords: z.array(z.string()).default([]),
 });
 
 export function sort(a: News, b: News) {
-    const dateA = new Date(a.isoDate).getTime();
-    const dateB = new Date(b.isoDate).getTime();
+    const dateA = a.published.getTime();
+    const dateB = b.published.getTime();
     return dateB - dateA;
 }
 
@@ -23,6 +23,6 @@ export type News = z.infer<typeof newsSchema>;
 export type CreateNewsDTO = z.infer<typeof createNewsSchema>;
 
 export const newsFactory = (dto: CreateNewsDTO): News => ({
-    id: new Bun.SHA256().update(`${dto.link}-${dto.title}`).digest("hex"),
+    id: new Bun.SHA256().update(`${dto.url}-${dto.title}`).digest("hex"),
     ...dto
 });
