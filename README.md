@@ -44,6 +44,7 @@ The aggregator requires the following environment variables:
 GROQ_API_KEY=<your_groq_api_key>
 UPSTASH_REDIS_REST_URL=<your_upstash_redis_url>
 UPSTASH_REDIS_REST_TOKEN=<your_upstash_redis_token
+UPSTASH_REDIS_REST_KEY=<your_upstash_redis_key, default - 'news'>
 ```
 
 ## Contribution
