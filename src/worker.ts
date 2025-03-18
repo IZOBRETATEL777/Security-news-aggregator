@@ -133,11 +133,11 @@ export async function processor() {
 
     await kv.del("news");
 
-    if (datedNews.length === 0) {
-        return;
-    } else {
+    if (datedNews.length > 0) {
         // Process the news items with AI model
         const result = await complete(datedNews, topicsJoined, config.max_articles, config.ai_model);
+
+        console.log('News items:', result.length);
 
         // Save the news items to the database
         const grouped = result.reduce((acc, item) => {
@@ -159,8 +159,6 @@ async function dated_merge(oldNews: News[], newNews: News[], oldestDate: Date, l
     for (const news of oldNews) {
         if (news.published <= latestDate && news.published >= oldestDate) {
             newsMap.set(news.id, news);
-        } else { 
-            console.log('Deleted news item:', news);
         }
     }
 
