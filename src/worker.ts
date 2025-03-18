@@ -35,7 +35,51 @@ async function getOldNews() {
     if (news === null) {
         return [];
     }
-    return Object.values(news) as News[];
+    // change from date string to date object
+    return Object.entries(news).map(([key, value]) => {
+        const parsedValue = typeof value === "string" ? JSON.parse(value) : value;
+        return {
+            id: key,
+            ...parsedValue,
+            published: new Date(parsedValue.published)
+        };
+    });
+}
+
+async function getLatestDateAndOldestDate(): Promise<{ oldestDate: Date, latestDate: Date }> {
+    const oldNews = new Date();
+    const newNews = new Date();
+    const fetchPeriod = config.data_period;
+
+    if (fetchPeriod === "today") {
+        return { oldestDate: oldNews, latestDate: newNews };
+    }
+
+    else if (typeof fetchPeriod === "object" && "range" in fetchPeriod) {
+        const { startDate, endDate } = fetchPeriod.range;
+        const start = dayjs(startDate).toDate();
+        const end = dayjs(endDate).toDate();
+        return { oldestDate: start, latestDate: end };
+    }
+
+    else if (fetchPeriod === "this_week") {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (6 - today.getDay()));
+        return { oldestDate: start, latestDate: end };
+    }
+
+    else if (fetchPeriod === "previous_week") {
+        const today = new Date();
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() - 7);
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (6 - today.getDay() - 7));
+        return { oldestDate: start, latestDate: end };
+    }
+
+    else {
+        return { oldestDate: oldNews, latestDate: newNews };
+    }
+
 }
 
 async function getRssFeed(url: string) {
@@ -83,39 +127,42 @@ export async function processor() {
     }
 
     const oldNews = await getOldNews();
-    const datedNews = await dated_merge(oldNews, news);
+    const { oldestDate, latestDate } = await getLatestDateAndOldestDate();
 
-    const result = await complete(datedNews, topicsJoined, config.max_articles, config.ai_model);
+    const datedNews = await dated_merge(oldNews, news, oldestDate, latestDate);
 
-    // Save the news items to the database
-    const grouped = result.reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-    }, {} as Record<string, News>);
+    await kv.del("news");
 
-    await kv.hset("news", grouped);
+    if (datedNews.length === 0) {
+        return;
+    } else {
+        // Process the news items with AI model
+        const result = await complete(datedNews, topicsJoined, config.max_articles, config.ai_model);
+
+        // Save the news items to the database
+        const grouped = result.reduce((acc, item) => {
+            acc[item.id] = item;
+            return acc;
+        }, {} as Record<string, News>);
+        
+        await kv.hset("news", grouped);
+    }
 
 }
 
-// merge old news with new news but remove newer news in old news and remove. Remove dubplicated news
-async function dated_merge(oldNews: News[], newNews: News[]) {
-    const oldNewsMap = oldNews.reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-    }, {} as Record<string, News>);
+async function dated_merge(oldNews: News[], newNews: News[], oldestDate: Date, latestDate: Date): Promise<News[]> {
+    const newsMap = new Map<string, News>();
 
-    const newNewsMap = newNews.reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-    }, {} as Record<string, News>);
-
-    const merged = { ...oldNewsMap, ...newNewsMap };
-
-    for (const id in oldNewsMap) {
-        if (newNewsMap[id] && new Date(oldNewsMap[id].published) < new Date(newNewsMap[id].published)) {
-            delete merged[id];
+    for (const news of newNews) {
+        newsMap.set(news.id, news);
+    }
+    for (const news of oldNews) {
+        if (news.published <= latestDate && news.published >= oldestDate) {
+            newsMap.set(news.id, news);
+        } else { 
+            console.log('Deleted news item:', news);
         }
     }
 
-    return Object.values(merged).sort();
+    return Array.from(newsMap.values()).sort();
 }
