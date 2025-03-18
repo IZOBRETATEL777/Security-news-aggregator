@@ -35,7 +35,7 @@ jobs:
           tags: latest
 
       - name: Build and Publish Image
-        uses: docker/build-push-action@v5.1.0
+        uses: docker/build-push-action@v6.15.0
         with:
           context: .
           file: ./Dockerfile
