@@ -22,6 +22,7 @@ const yamlSchema = z.object({
     exclude_topics: z.array(z.string()).optional().default([]),
     max_articles: z.number().int().positive().optional().default(20),
     ai_model: z.string().optional().default("deepseek-r1-distill-llama-70b"),
+    refresh_rate_minutes: z.number().int().positive().optional().default(60),
 });
 
 const configPath = "./config.yaml";
@@ -30,6 +31,8 @@ const config = yamlSchema.parse(parse(buffer));
 
 const topicsJoined = config.topics.join("\n");
 const excludeTopicsJoined = config.exclude_topics.join("\n");
+
+export const REFRESH_RATE_MINUTES = config.refresh_rate_minutes;
 
 
 async function getOldNews() {
