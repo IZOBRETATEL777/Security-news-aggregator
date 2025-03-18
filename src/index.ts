@@ -1,7 +1,7 @@
 import { kv, newsSchema, sort, type News } from "./db";
 import { z } from "zod";
 import NewsComponent from "../components/News.tsx";
-import { processor, REFRESH_RATE_MINUTES } from "./worker.ts";
+import { processor, REFRESH_RATE_MINUTES, REDIS_KEY } from "./worker.ts";
 
 const entry = await Bun.file('./index.html').text();
 
@@ -9,7 +9,7 @@ const [part1, part2] = entry.split("<!--entry-->");
 
 const getNews = async (): Promise<News[]> => {
     try {
-        const newsData = await kv.hgetall("news");
+        const newsData = await kv.hgetall(REDIS_KEY);
 
         if (!newsData) return [];
 

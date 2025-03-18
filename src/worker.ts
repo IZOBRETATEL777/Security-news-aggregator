@@ -33,10 +33,11 @@ const topicsJoined = config.topics.join("\n");
 const excludeTopicsJoined = config.exclude_topics.join("\n");
 
 export const REFRESH_RATE_MINUTES = config.refresh_rate_minutes;
+export const REDIS_KEY = Bun.env.UPSTASH_REDIS_REST_KEY || "news";
 
 
 async function getOldNews() {
-    const news = await kv.hgetall("news");
+    const news = await kv.hgetall(REDIS_KEY);
     if (news === null) {
         return [];
     }
@@ -136,7 +137,7 @@ export async function processor() {
 
     const datedNews = await dated_merge(oldNews, news, oldestDate, latestDate);
 
-    await kv.del("news");
+    await kv.del(REDIS_KEY);
 
     if (datedNews.length > 0) {
         // Process the news items with AI model
@@ -148,7 +149,7 @@ export async function processor() {
             return acc;
         }, {} as Record<string, News>);
         
-        await kv.hset("news", grouped);
+        await kv.hset(REDIS_KEY, grouped);
     }
 
 }
