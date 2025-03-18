@@ -48,6 +48,16 @@ topics:
   - Data Breaches
 
 
+excluded_topics:
+  - Security Product Marketing
+  - Conferences & Events
+  - Success Stories
+  - Training & Certifications
+  - Bug Bounties
+  - Blogs & Opinions
+  - Cryptocurrency
+
+
 data_period:
   # today
   # this_week
@@ -56,5 +66,7 @@ data_period:
   #   endDate: 2025-03-03
   previous_week
 
+
 max_articles: 20
 ai_model: "deepseek-r1-distill-llama-70b"
+refresh_rate_minutes: 3 # 24 hours

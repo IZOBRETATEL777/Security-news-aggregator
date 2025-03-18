@@ -1,7 +1,7 @@
 import { kv, newsSchema, sort, type News } from "./db";
 import { z } from "zod";
 import NewsComponent from "../components/News.tsx";
-import { processor } from "./worker.ts";
+import { processor, REFRESH_RATE_MINUTES } from "./worker.ts";
 
 const entry = await Bun.file('./index.html').text();
 
@@ -37,7 +37,7 @@ const getNews = async (): Promise<News[]> => {
 };
 
 processor();
-setInterval(processor, 1000 * 60 * 60);
+setInterval(processor, 1000 * 60 * REFRESH_RATE_MINUTES);
 
 const server = Bun.serve({
     idleTimeout: 20,

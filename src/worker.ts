@@ -19,8 +19,10 @@ const yamlSchema = z.object({
         z.literal("this_week"),
         z.literal("previous_week"),
     ]),
+    exclude_topics: z.array(z.string()).optional().default([]),
     max_articles: z.number().int().positive().optional().default(20),
     ai_model: z.string().optional().default("deepseek-r1-distill-llama-70b"),
+    refresh_rate_minutes: z.number().int().positive().optional().default(60),
 });
 
 const configPath = "./config.yaml";
@@ -28,6 +30,9 @@ const buffer = await Bun.file(configPath).text();
 const config = yamlSchema.parse(parse(buffer));
 
 const topicsJoined = config.topics.join("\n");
+const excludeTopicsJoined = config.exclude_topics.join("\n");
+
+export const REFRESH_RATE_MINUTES = config.refresh_rate_minutes;
 
 
 async function getOldNews() {
@@ -135,11 +140,9 @@ export async function processor() {
 
     if (datedNews.length > 0) {
         // Process the news items with AI model
-        const result = await complete(datedNews, topicsJoined, config.max_articles, config.ai_model);
+        const result = await complete(datedNews, topicsJoined, excludeTopicsJoined, config.max_articles, config.ai_model);
 
-        console.log('News items:', result.length);
-
-        // Save the news items to the database
+        // Save the news items to the databases
         const grouped = result.reduce((acc, item) => {
             acc[item.id] = item;
             return acc;

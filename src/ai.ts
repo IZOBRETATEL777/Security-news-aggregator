@@ -3,25 +3,22 @@ import { generateObject } from "ai";
 import type { News } from "./db";
 import { z } from "zod";
 
-const templatePrompt = (news: string, topics: string, newsItemLimit: number) => `
-Analyze the following news items and identify the most relevant ones based on the given security topics.
+const templatePrompt = (news: string, topics: string, irrelevantTopics: string, newsItemLimit: number) => `
+Analyze the news items and identify the most relevant ones based on the given security topics.
 
-News:${news}
+News: ${news}
 
-Topics:${topics}
+Relevant Topics: ${topics}
 
-Instructions:
+Exclude news items related to: ${irrelevantTopics}
 
-Select the top ${newsItemLimit} relevant news items.
+Select the top ${newsItemLimit} relevant items based on security insights, risks, incidents, and best practices.
 
-Exclude ads and promotional content.
-
-Focus on security insights, risks, incidents, and best practices.
-
-Return only the IDs of the top ${newsItemLimit} news items.
+Return only their IDs.
 `;
 
-export async function complete(newsItems: News[], topicsJoined: string, newsItemLimit: number, aiModel: string): Promise<News[]> {
+
+export async function complete(newsItems: News[], topicsJoined: string, excludeTopicsJoined: string, newsItemLimit: number, aiModel: string): Promise<News[]> {
     const formattedNews = newsItems
         .map((item) => `ID:${item.id}; Title: ${item.title}`)
         .join("\n\n");
@@ -37,7 +34,7 @@ export async function complete(newsItems: News[], topicsJoined: string, newsItem
                 })
             )
         }),
-        prompt: templatePrompt(formattedNews, topicsJoined, newsItemLimit),
+        prompt: templatePrompt(formattedNews, topicsJoined, excludeTopicsJoined, newsItemLimit),
     })
     // Return news items whose IDs are in object.answers
     return newsItems
