@@ -69,4 +69,4 @@ data_period:
 
 max_articles: 20
 ai_model: "deepseek-r1-distill-llama-70b"
-refresh_rate_minutes: 3 # 24 hours
+refresh_rate_minutes: 1440 # 24 hours
