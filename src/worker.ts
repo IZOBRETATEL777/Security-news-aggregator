@@ -4,6 +4,8 @@ import { fetchTodaysRSS, fetchRangeDateRSS, fetchRSS } from "./rss";
 import { createNewsSchema, kv, newsFactory, type News } from "./db";
 import { complete } from "./ai";
 import dayjs from 'dayjs';
+import { Cron } from "croner";
+import { sendNews } from "./mailsandage";
 
 const yamlSchema = z.object({
     topics: z.array(z.string()).min(1),
@@ -23,6 +25,20 @@ const yamlSchema = z.object({
     max_articles: z.number().int().positive().optional().default(20),
     ai_model: z.string().optional().default("deepseek-r1-distill-llama-70b"),
     refresh_rate_minutes: z.number().int().positive().optional().default(60),
+
+    email_notifications: z.object({
+        enabled: z.boolean(),
+        subscribers: z.array(z.string().email()).optional().default([]),
+        cron: z.string().regex(
+            /^(\d+|\*) (\d+|\*) (\d+|\*) (\d+|\*) (\d+|\*)$/,
+            "Invalid cron format (should be 'min hour day month weekday')"
+        ),
+    }).optional().default({
+        enabled: false,
+        subscribers: [],
+        cron: "* * * * *",
+    }),
+
 });
 
 const configPath = "./config.yaml";
@@ -148,7 +164,7 @@ export async function processor() {
             acc[item.id] = item;
             return acc;
         }, {} as Record<string, News>);
-        
+
         await kv.hset(REDIS_KEY, grouped);
     }
 
@@ -167,4 +183,12 @@ async function dated_merge(oldNews: News[], newNews: News[], oldestDate: Date, l
     }
 
     return Array.from(newsMap.values()).sort();
+}
+
+export const emailConfig = config.email_notifications;
+
+if (emailConfig.enabled) {
+    const cron = new Cron(emailConfig.cron, sendNews);
+    console.log(`Email notifications enabled. ${cron.getPattern()}`);
+    cron.trigger();
 }
