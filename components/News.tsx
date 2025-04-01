@@ -6,7 +6,7 @@ interface NewsProps {
   news: NewsItem[];
 }
 
-export default function NewsComponent({ news }: NewsProps) {
+export function NewsComponent({ news }: NewsProps) {
   return news.map(e => ({ ...e, published: new Date(e.published) })).map((item) => {
     // Format the date string: "Friday, March 14"
     const formattedDate = item.published.toLocaleDateString("en-US", {

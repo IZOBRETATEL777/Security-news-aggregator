@@ -1,11 +1,12 @@
 import { parse } from "yaml";
 import { z } from "zod";
-import { fetchTodaysRSS, fetchRangeDateRSS, fetchRSS } from "./rss";
-import { createNewsSchema, kv, newsFactory, type News } from "./db";
-import { complete, initTemplate } from "./ai";
+import { fetchTodaysRSS, fetchRangeDateRSS, fetchRSS } from "./services/rss";
+import { createNewsSchema, newsFactory, type News } from "./db";
+import { complete, initTemplate } from "./services/ai";
 import dayjs from 'dayjs';
 import { Cron } from "croner";
-import { sendNews } from "./mailsandage";
+import { sendNews } from "./services/mailsandage";
+import { NewsService } from "./services/newsService";
 
 const yamlSchema = z.object({
     topics: z.array(z.string()).min(1),
@@ -49,24 +50,7 @@ const topicsJoined = config.topics.join("\n");
 const excludeTopicsJoined = config.exclude_topics.join("\n");
 
 export const REFRESH_RATE_MINUTES = config.refresh_rate_minutes;
-export const REDIS_KEY = Bun.env.UPSTASH_REDIS_REST_KEY || "news";
 
-
-async function getOldNews() {
-    const news = await kv.hgetall(REDIS_KEY);
-    if (news === null) {
-        return [];
-    }
-    // change from date string to date object
-    return Object.entries(news).map(([key, value]) => {
-        const parsedValue = typeof value === "string" ? JSON.parse(value) : value;
-        return {
-            id: key,
-            ...parsedValue,
-            published: new Date(parsedValue.published)
-        };
-    });
-}
 
 async function getLatestDateAndOldestDate(): Promise<{ oldestDate: Date, latestDate: Date }> {
     const oldNews = new Date();
@@ -131,6 +115,7 @@ async function getRssFeed(url: string) {
 };
 
 export async function processor() {
+    const newsService = new NewsService();
     // Fetch news from RSS feeds to one array
     const news: News[] = [];
     for (const url of config.feeds) {
@@ -148,24 +133,17 @@ export async function processor() {
         }
     }
 
-    const oldNews = await getOldNews();
+    const oldNews = await newsService.getNews();
     const { oldestDate, latestDate } = await getLatestDateAndOldestDate();
 
     const datedNews = await dated_merge(oldNews, news, oldestDate, latestDate);
 
-    await kv.del(REDIS_KEY);
+    await newsService.deleteAllNews();
 
     if (datedNews.length > 0) {
         // Process the news items with AI model
         const result = await complete(datedNews, topicsJoined, excludeTopicsJoined, config.max_articles, config.ai_model, initTemplate);
-
-        // Save the news items to the databases
-        const grouped = result.reduce((acc, item) => {
-            acc[item.id] = item;
-            return acc;
-        }, {} as Record<string, News>);
-
-        await kv.hset(REDIS_KEY, grouped);
+        await newsService.saveNews(result)
     }
 
 }
