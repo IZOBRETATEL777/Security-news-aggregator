@@ -3,7 +3,7 @@ import { generateObject } from "ai";
 import type { News } from "./db";
 import { z } from "zod";
 
-const templatePrompt = (news: string, topics: string, irrelevantTopics: string, newsItemLimit: number) => `
+export const initTemplate = (news: string, topics: string, irrelevantTopics: string, newsItemLimit: number) => `
 Analyze the news items and identify the most relevant ones based on the given security topics.
 
 News: ${news}
@@ -12,13 +12,25 @@ Relevant Topics: ${topics}
 
 Exclude news items related to: ${irrelevantTopics}
 
-Select the top ${newsItemLimit} relevant items based on security insights, risks, incidents, and best practices.
+Select the top ${newsItemLimit} relevant items.
+
+Return only their IDs.
+`;
+
+export const reducedTemplate = (news: string, topics: string, irrelevantTopics: string, newsItemLimit: number) => `
+Reduce the list of news items to TOP ${newsItemLimit} items based on the given security topics.
+
+News: ${news}
+
+Relevant Topics: ${topics}
+
+Exclude news items related to: ${irrelevantTopics}
 
 Return only their IDs.
 `;
 
 
-export async function complete(newsItems: News[], topicsJoined: string, excludeTopicsJoined: string, newsItemLimit: number, aiModel: string): Promise<News[]> {
+export async function complete(newsItems: News[], topicsJoined: string, excludeTopicsJoined: string, newsItemLimit: number, aiModel: string, templatePrompt: ((arg0: string, arg1: string, arg2: string, arg3: number) => string) ): Promise<News[]> {
     const formattedNews = newsItems
         .map((item) => `ID:${item.id}; Title: ${item.title}`)
         .join("\n\n");
