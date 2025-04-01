@@ -1,9 +1,9 @@
+import { symbol } from 'zod';
 import { container } from '../configs/ioc';
 import { type BaseRepository, type News } from '../db';
 import { reducedTemplate, complete } from './ai';
 
 export class NewsService {
-
     private repository = container.resolve<BaseRepository<News, string>>('repo');
 
 
@@ -27,7 +27,6 @@ export class NewsService {
     async deleteAllNews() : Promise<void> {
         await this.repository.deleteNewsIndex();
     }
-
-
-
 }
+
+container.register(NewsService.name, new NewsService());
