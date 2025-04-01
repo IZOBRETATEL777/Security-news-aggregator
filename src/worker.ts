@@ -2,7 +2,7 @@ import { parse } from "yaml";
 import { z } from "zod";
 import { fetchTodaysRSS, fetchRangeDateRSS, fetchRSS } from "./rss";
 import { createNewsSchema, kv, newsFactory, type News } from "./db";
-import { complete } from "./ai";
+import { complete, initTemplate } from "./ai";
 import dayjs from 'dayjs';
 import { Cron } from "croner";
 import { sendNews } from "./mailsandage";
@@ -157,7 +157,7 @@ export async function processor() {
 
     if (datedNews.length > 0) {
         // Process the news items with AI model
-        const result = await complete(datedNews, topicsJoined, excludeTopicsJoined, config.max_articles, config.ai_model);
+        const result = await complete(datedNews, topicsJoined, excludeTopicsJoined, config.max_articles, config.ai_model, initTemplate);
 
         // Save the news items to the databases
         const grouped = result.reduce((acc, item) => {
