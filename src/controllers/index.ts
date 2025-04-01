@@ -1,43 +1,20 @@
-import { kv, newsSchema, sort, type News } from "./db";
-import { z } from "zod";
-import NewsComponent from "../components/News.tsx";
-import { processor, REFRESH_RATE_MINUTES, REDIS_KEY } from "./worker.ts";
+import {  NewsComponent } from "../../components/News.tsx";
+import { processor, REFRESH_RATE_MINUTES } from "./../worker.ts";
+import { NewsService } from "./../services/newsService.ts";
 
 const entry = await Bun.file('./index.html').text();
 
 const [part1, part2] = entry.split("<!--entry-->");
-
-const getNews = async (): Promise<News[]> => {
-    try {
-        const newsData = await kv.hgetall(REDIS_KEY);
-
-        if (!newsData) return [];
-
-        const newsArray = Object.entries(newsData).map(([key, value]) => {
-            const parsedValue = typeof value === "string" ? JSON.parse(value) : value;
-
-            return {
-                id: key,
-                ...parsedValue,
-                published: new Date(parsedValue.published)
-            };
-        });
-
-        const result = z.array(newsSchema).safeParse(newsArray);
-        if (!result.success) {
-            console.error("News data validation failed:", result.error.format());
-            return [];
-        }
-
-        return result.data.sort(sort);
-    } catch (error) {
-        console.warn(error);
-        return [];
-    }
-};
+const [part3, part4] = part2.split("<!-- limit_scale -->");
 
 processor();
 setInterval(processor, 1000 * 60 * REFRESH_RATE_MINUTES);
+
+const getNews = async () => {
+    const newsService = new NewsService();
+    const news = await newsService.getNews();
+    return news;
+};
 
 const server = Bun.serve({
     idleTimeout: 20,
