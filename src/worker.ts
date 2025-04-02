@@ -1,15 +1,16 @@
 import { fetchRangeDateRSS } from "./services/rss";
 import { createNewsSchema, newsFactory, type News } from "./db";
-import { complete, initTemplate } from "./services/ai";
+import { complete, initTemplate, reducedTemplate } from "./services/ai";
 import { getLatestDateAndOldestDate, getStartEndDate, TOPICS_EXCLUDED, TOPICS_JOINED} from "./configs/configProvider";
 import { Cron } from "croner";
 import { sendNews } from "./services/mailsandage";
 import { NewsService } from "./services/newsService";
 import { CONFIG } from "./configs/configProvider";
+import { container } from "./configs/ioc";
 
 export async function processor() {
     const { start, end } = await getStartEndDate();
-    const newsService = new NewsService();
+    const newsService = container.resolve<NewsService>(NewsService.name);
     // Fetch news from RSS feeds to one array
     const news: News[] = [];
     for (const url of CONFIG.feeds) {
@@ -39,6 +40,15 @@ export async function processor() {
         await newsService.saveNews(result)
     }
 
+}
+
+export async function reduceNews(count: number): Promise<News[]> {
+    const newsService = container.resolve<NewsService>(NewsService.name);
+    const news = await newsService.getNews();
+    const { oldestDate, latestDate } = await getLatestDateAndOldestDate();
+    const reducedNews = news.filter((news) => news.published >= oldestDate && news.published <= latestDate);
+    const result = await complete(reducedNews, TOPICS_EXCLUDED, TOPICS_JOINED, count, CONFIG.ai_model, reducedTemplate);
+    return result;
 }
 
 async function dated_merge(oldNews: News[], newNews: News[], oldestDate: Date, latestDate: Date): Promise<News[]> {
