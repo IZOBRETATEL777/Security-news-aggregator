@@ -6,7 +6,6 @@ import { container } from "../configs/ioc.ts";
 import type { News } from "../db.ts";
 
 const entry = await Bun.file('./index.html').text();
-
 const [beforeTable, part1, part2] = entry.split("<!--entry-->");
 
 processor();
@@ -30,35 +29,42 @@ const server = Bun.serve({
 
                         controller.enqueue(beforeTable);
 
+                        // Inject filter controls and script
                         controller.enqueue(`
-                        <div style="margin-bottom: 1rem;">
-                            <label for="newsRange">Select number of news to display: <span id="rangeVal">5</span></label>
-                            <input type="range" id="newsRange" min="5" max="${totalCount}" value="5" />
-                            <button id="applyFilter">Apply</button>
-                        </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label for="newsRange">Select number of news to display: <span id="rangeVal">5</span></label>
+                                <input type="range" id="newsRange" min="5" max="${totalCount}" value="5" />
+                                <button id="applyFilter">Apply</button>
+                            </div>
 
-                        <script>
-                            const range = document.getElementById("newsRange");
-                            const output = document.getElementById("rangeVal");
-                            range.oninput = () => output.textContent = range.value;
+                            <script>
+                                const range = document.getElementById("newsRange");
+                                const output = document.getElementById("rangeVal");
+                                range.oninput = () => output.textContent = range.value;
 
-                            document.getElementById("applyFilter").onclick = async () => {
-                                const res = await fetch('/filter?count=' + range.value);
-                                const data = await res.text();
-                                const tbody = document.getElementById("news-body");
-                                if (tbody) {
-                                    tbody.innerHTML = data;
-                                }
-                            };
-                        </script>
+                                document.getElementById("applyFilter").onclick = async () => {
+                                    const res = await fetch('/filter?count=' + range.value);
+                                    const data = await res.text();
+                                    const tbody = document.getElementById("news-body");
+                                    if (tbody) {
+                                        tbody.innerHTML = data;
+                                    }
+                                };
+                            </script>
                         `);
 
                         controller.enqueue(part1);
-                        controller.enqueue(`<tr id="loader"> <td>Loading...</td> </tr>`);
-                        const news = allNews;
-                        const newss = NewsComponent({ news }).join("\n");
+
+                        // Wrap your dynamic content in a tbody with ID
+                        controller.enqueue(`<tbody id="news-body">`);
+                        controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
+
+                        const newss = NewsComponent({ news: allNews }).join("\n");
                         controller.enqueue(newss);
+
                         controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
+                        controller.enqueue(`</tbody>`); // Close the injected tbody
+
                         controller.enqueue(part2);
                         controller.close();
                     },
@@ -76,8 +82,11 @@ const server = Bun.serve({
             async GET(req) {
                 const url = new URL(req.url);
                 const count = parseInt(url.searchParams.get("count") || "5");
-                const reduced = reduceNews(count);
-                const html = NewsComponent({ news: await reduced }).join("\n");
+
+                // reduceNews should return a Promise<News[]>
+                const reduced = await reduceNews(count);
+                const html = NewsComponent({ news: reduced }).join("\n");
+
                 return new Response(html, {
                     headers: {
                         "Content-Type": "text/html",
@@ -91,7 +100,7 @@ const server = Bun.serve({
                 return Response.json({
                     status: "ok",
                     timestamp: new Date().toISOString(),
-                })
+                });
             }
         },
     },
