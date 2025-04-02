@@ -10,7 +10,7 @@ import { container } from "./configs/ioc";
 
 export async function processor() {
     const { start, end } = await getStartEndDate();
-    const newsService = container.resolve<NewsService>(NewsService.name);
+    const newsService = container.resolve<NewsService>(NewsService);
     // Fetch news from RSS feeds to one array
     const news: News[] = [];
     for (const url of CONFIG.feeds) {
@@ -43,7 +43,7 @@ export async function processor() {
 }
 
 export async function reduceNews(count: number): Promise<News[]> {
-    const newsService = container.resolve<NewsService>(NewsService.name);
+    const newsService = container.resolve<NewsService>(NewsService);
     const news = await newsService.getNews();
     const { oldestDate, latestDate } = await getLatestDateAndOldestDate();
     const reducedNews = news.filter((news) => news.published >= oldestDate && news.published <= latestDate);
