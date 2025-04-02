@@ -43,9 +43,12 @@ const server = Bun.serve({
                                 range.oninput = () => output.textContent = range.value;
 
                                 document.getElementById("applyFilter").onclick = async () => {
+                                    const tbody = document.getElementById("news-body");
+                                    if (tbody) {
+                                        tbody.innerHTML = '<tr id="loader"><td>Loading...</td></tr>';
+                                    }
                                     const res = await fetch('/filter?count=' + range.value);
                                     const data = await res.text();
-                                    const tbody = document.getElementById("news-body");
                                     if (tbody) {
                                         tbody.innerHTML = data;
                                     }
