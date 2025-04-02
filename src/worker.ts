@@ -43,7 +43,7 @@ export async function processor() {
 }
 
 export async function reduceNews(count: number): Promise<News[]> {
-    const newsService = container.resolve<NewsService>(NewsService);
+    const newsService = container.resolve(NewsService);
     const news = await newsService.getNews();
     const { oldestDate, latestDate } = await getLatestDateAndOldestDate();
     const reducedNews = news.filter((news) => news.published >= oldestDate && news.published <= latestDate);
