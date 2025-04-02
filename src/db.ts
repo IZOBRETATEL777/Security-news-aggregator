@@ -83,7 +83,7 @@ export class KVRepository implements BaseRepository<News, string> {
     }
 
     async deleteNewsIndex(): Promise<void> {
-        await kv.hdel(REDIS_KEY);
+        await kv.del(REDIS_KEY)
     }
 
 }
