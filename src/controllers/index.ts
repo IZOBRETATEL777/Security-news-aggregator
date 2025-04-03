@@ -4,7 +4,6 @@ import { REFRESH_RATE_MINUTES } from "./../configs/configProvider.ts";
 import { NewsService } from "./../services/newsService.ts";
 import { container } from "../configs/ioc.ts";
 import type { News } from "../db.ts";
-import { number } from "zod";
 
 const entry = await Bun.file('./index.html').text();
 const [part1, part2] = entry.split("<!--entry-->");
@@ -24,12 +23,10 @@ const server = Bun.serve({
         "/": {
             async GET(req) {
                 const url = new URL(req.url);
-                const count = parseInt(url.searchParams.get("count") || "0");
+                const count = parseInt(url.searchParams.get("count") || "5");
                 const readableStream = new ReadableStream({
                     async start(controller) {
-
                         controller.enqueue(part1);
-
                         controller.enqueue(`<tbody id="news-body">`);
                         controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
 
@@ -38,19 +35,21 @@ const server = Bun.serve({
                             newsComponent = NewsComponent({ news: await reduceNews(count) });
                         } else {
                             newsComponent = NewsComponent({ news: await getNews() });
-                            controller.enqueue(`<script>
-                                                const range = document.getElementById("newsRange");
-                                                range.min = 5;
-                                                range.max = ${newsComponent.length};
-                                                range.value = ${newsComponent.length};
-                                                </script>`
-                            );
                         }
+
                         controller.enqueue(newsComponent.join(''));
 
                         controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
-                        controller.enqueue(`</tbody>`);
 
+                        // Set range attributes and value
+                        controller.enqueue(`<script>
+                            const range = document.getElementById("newsRange");
+                            range.min = 5;
+                            range.max = ${newsComponent.length};
+                            range.value = ${count};
+                             </script>`);
+
+                        controller.enqueue(`</tbody>`);
                         controller.enqueue(part2);
                         controller.close();
                     },
