@@ -24,7 +24,6 @@ const server = Bun.serve({
             async GET(req) {
                 const url = new URL(req.url);
                 const count = parseInt(url.searchParams.get("count") || "5");
-                console.log("Count:", count);
                 const readableStream = new ReadableStream({
                     async start(controller) {
                         controller.enqueue(part1);
@@ -32,7 +31,7 @@ const server = Bun.serve({
                         controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
 
                         let newsComponent: string[];
-                        if (count > 5) {
+                        if (count >= 5) {
                             newsComponent = NewsComponent({ news: await reduceNews(count) });
                         } else {
                             newsComponent = NewsComponent({ news: await getNews() });
@@ -41,7 +40,6 @@ const server = Bun.serve({
                         controller.enqueue(newsComponent.join(''));
 
                         controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
-                        console.log("News loaded:", newsComponent.length);
 
                         // Set range attributes and value
                         controller.enqueue(`<script>
