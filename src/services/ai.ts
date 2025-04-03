@@ -18,7 +18,7 @@ Return only their IDs.
 `;
 
 export const reducedTemplate = (news: string, topics: string, irrelevantTopics: string, newsItemLimit: number) => `
-Reduce the list of news items to TOP ${newsItemLimit} items based on the given security topics.
+Give exactly ${newsItemLimit} news based on the given security topics that are most relevant and important.
 
 News: ${news}
 
