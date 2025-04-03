@@ -7,7 +7,7 @@ import type { News } from "../db.ts";
 import { number } from "zod";
 
 const entry = await Bun.file('./index.html').text();
-const [beforeTable, part1, part2] = entry.split("<!--entry-->");
+const [part1, part2] = entry.split("<!--entry-->");
 
 processor();
 setInterval(processor, 1000 * 60 * REFRESH_RATE_MINUTES);
@@ -24,53 +24,29 @@ const server = Bun.serve({
         "/": {
             async GET(req) {
                 const url = new URL(req.url);
-                const count = parseInt(url.searchParams.get("count") || "5");
+                const count = parseInt(url.searchParams.get("count") || "0");
                 const readableStream = new ReadableStream({
                     async start(controller) {
-                        const allNews = await getNews();
-                        const totalCount = allNews.length;
-
-                        controller.enqueue(beforeTable);
-
-                        // Inject filter controls and script
-                        controller.enqueue(`
-                            <div style="margin-bottom: 1rem;">
-                                <label for="newsRange">Select number of news to display: <span id="rangeVal">5</span></label>
-                                <input type="range" id="newsRange" min="5" max="${totalCount}" value="${totalCount}" />
-                                <button id="applyFilter">Apply</button>
-                            </div>
-
-                            <script>
-                                const range = document.getElementById("newsRange");
-                                const output = document.getElementById("rangeVal");
-                                range.oninput = () => output.textContent = range.value;
-
-                                document.getElementById("applyFilter").onclick = async () => {
-                                    const tbody = document.getElementById("news-body");
-                                    if (tbody) {
-                                        tbody.innerHTML = '<tr id="loader"><td>Loading...</td></tr>';
-                                    }
-                                    const res = await fetch('/?count=' + range.value);
-                                    const data = await res.text();
-                                    if (tbody) {
-                                        tbody.innerHTML = data;
-                                    }
-                                };
-                            </script>
-                        `);
 
                         controller.enqueue(part1);
 
                         controller.enqueue(`<tbody id="news-body">`);
                         controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
 
-
-                        if (count && typeof (count) === typeof number && count > 5) {
-                            controller.enqueue((await reduceNews(count)).join("\n"));
+                        let newsComponent: string[];
+                        if (count > 5) {
+                            newsComponent = NewsComponent({ news: await reduceNews(count) });
                         } else {
-                            controller.enqueue(await allNews.join("\n"));
+                            newsComponent = NewsComponent({ news: await getNews() });
+                            controller.enqueue(`<script>
+                                                const range = document.getElementById("newsRange");
+                                                range.min = 5;
+                                                range.max = ${newsComponent.length};
+                                                range.value = ${newsComponent.length};
+                                                </script>`
+                            );
                         }
-                        
+                        controller.enqueue(newsComponent.join(''));
 
                         controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
                         controller.enqueue(`</tbody>`);
