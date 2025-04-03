@@ -67,7 +67,7 @@ data_period:
   previous_week
 
 email_notifications:
-  enabled: true
+  enabled: false
   subscribers:
     - "roman.tolstosheyev.std@bhos.edu.az"
   cron: "21 17 * * 3"
