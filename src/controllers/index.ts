@@ -68,7 +68,7 @@ const server = Bun.serve({
                         if (count && typeof (count) === typeof number && count > 5) {
                             controller.enqueue((await reduceNews(count)).join("\n"));
                         } else {
-                            controller.enqueue(allNews.join("\n"));
+                            controller.enqueue(await allNews.join("\n"));
                         }
                         
 
