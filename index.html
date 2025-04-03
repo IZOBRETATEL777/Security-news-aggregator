@@ -24,7 +24,29 @@
         <div class="row m-0">
             <div class="col p-3 xs-12">
                 <h1 class="text-center mb-4 text-dark">🔐 Latest Cybersecurity News by SRE Team 🧑‍💻</h1>
-                <!--entry-->
+                <div style="margin-bottom: 1rem;">
+                    <label for="newsRange">Select number of news to display: <span id="rangeVal">5</span></label>
+                    <input type="range" id="newsRange" />
+                    <button id="applyFilter">Apply</button>
+                </div>
+
+                <script>
+                    const range = document.getElementById("newsRange");
+                    const output = document.getElementById("rangeVal");
+                    range.oninput = () => output.textContent = range.value;
+
+                    document.getElementById("applyFilter").onclick = async () => {
+                        const tbody = document.getElementById("news-body");
+                        if (tbody) {
+                            tbody.innerHTML = '<tr id="loader"><td>Loading...</td></tr>';
+                        }
+                        const res = await fetch('/?count=' + range.value);
+                        const data = await res.text();
+                        if (tbody) {
+                            tbody.innerHTML = data;
+                        }
+                    };
+                </script>
                 <table class="table table-fixed table-striped table-bordered table-hover table-responsive">
                     <thead class="table-primary text-center">
                         <tr>
