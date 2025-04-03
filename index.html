@@ -38,11 +38,6 @@
                             alert("Minimum number of news items is 5.");
                         }
                     };
-                    document.getElementById('DOMContentLoaded').addEventListener('DOMContentLoaded', function () {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const newsCount = urlParams.get('count') || 5;
-                        document.getElementById("newsCount").value = newsCount;
-                    });
                 </script>
                 <table class="table table-fixed table-striped table-bordered table-hover table-responsive">
                     <thead class="table-primary text-center">
