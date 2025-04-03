@@ -25,20 +25,19 @@
             <div class="col p-3 xs-12">
                 <h1 class="text-center mb-4 text-dark">🔐 Latest Cybersecurity News by SRE Team 🧑‍💻</h1>
                 <div style="margin-bottom: 1rem;">
-                    <label for="newsRange">Select number of news to display: <span id="rangeVal">5</span></label>
-                    <input type="range" id="newsRange" />
+                    <label for="newsCount">Select number of news to display:</label>
+                    <input type="number" id="newsCount" min="5" value="5" step="1" style="width: 100px;" />
                     <button id="applyFilter">Apply</button>
                 </div>
-
                 <script>
-                    const range = document.getElementById("newsRange");
-                    const output = document.getElementById("rangeVal");
-                    range.oninput = () => output.textContent = range.value;
-
                     document.getElementById("applyFilter").onclick = () => {
-                        const range = document.getElementById("newsRange");
-                        window.location.href = "/?count=" + range.value;
-                    }
+                        const count = document.getElementById("newsCount").value;
+                        if (parseInt(count) >= 5) {
+                            window.location.href = "/?count=" + count;
+                        } else {
+                            alert("Minimum number of news items is 5.");
+                        }
+                    };
                 </script>
                 <table class="table table-fixed table-striped table-bordered table-hover table-responsive">
                     <thead class="table-primary text-center">
