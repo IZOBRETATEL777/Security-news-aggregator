@@ -8,6 +8,8 @@ import { NewsService } from "./services/newsService";
 import { CONFIG } from "./configs/configProvider";
 import { container } from "./configs/ioc";
 
+const newsService = container.resolve<NewsService>(NewsService);
+
 export async function processor() {
     const { start, end } = await getStartEndDate();
     const newsService = container.resolve<NewsService>(NewsService);
@@ -43,13 +45,14 @@ export async function processor() {
 }
 
 export async function reduceNews(count: number): Promise<News[]> {
-    const newsService = container.resolve(NewsService);
-    const news = await newsService.getNews();
-    const { oldestDate, latestDate } = await getLatestDateAndOldestDate();
-    const reducedNews = news.filter((news) => news.published >= oldestDate && news.published <= latestDate);
-    const result = await complete(reducedNews, TOPICS_EXCLUDED, TOPICS_JOINED, count, CONFIG.ai_model, reducedTemplate);
-    return result;
+    return await newsService.getReducedNews(TOPICS_JOINED, TOPICS_EXCLUDED, count, CONFIG.ai_model);
 }
+
+export async function getNews(): Promise<News[]> {
+    const news = await newsService.getNews();
+    return news;
+}
+
 
 async function dated_merge(oldNews: News[], newNews: News[], oldestDate: Date, latestDate: Date): Promise<News[]> {
     const newsMap = new Map<string, News>();

@@ -24,8 +24,6 @@ News: ${news}
 
 Relevant Topics: ${topics}
 
-Exclude news items related to: ${irrelevantTopics}
-
 Return only their IDs.
 `;
 

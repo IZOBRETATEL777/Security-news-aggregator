@@ -1,21 +1,13 @@
 import { NewsComponent } from "../../components/News.tsx";
-import { processor, reduceNews } from "./../worker.ts";
+import { getNews, reduceNews } from "./../worker.ts";
 import { REFRESH_RATE_MINUTES } from "./../configs/configProvider.ts";
-import { NewsService } from "./../services/newsService.ts";
-import { container } from "../configs/ioc.ts";
-import type { News } from "../db.ts";
-
+import { processor } from "./../worker.ts";
 const entry = await Bun.file('./index.html').text();
 const [part1, part2] = entry.split("<!--entry-->");
 
 processor();
 setInterval(processor, 1000 * 60 * REFRESH_RATE_MINUTES);
 
-export async function getNews(): Promise<News[]> {
-    const newsService = container.resolve<NewsService>(NewsService.name);
-    const news = await newsService.getNews();
-    return news;
-};
 
 const server = Bun.serve({
     idleTimeout: 20,
