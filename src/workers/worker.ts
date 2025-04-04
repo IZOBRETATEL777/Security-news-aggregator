@@ -34,10 +34,11 @@ export async function processor() {
     const datedNews = await dated_merge(oldNews, news, oldestDate, latestDate);
 
     await newsService.deleteAllNews();
+    await newsService.saveNews(datedNews);
 
     if (datedNews.length > 0) {
+        await newsService.deleteAllNews();
         await newsService.saveNews(await newsService.getRelevantNews(
-            datedNews,
             TOPICS_EXCLUDED,
             TOPICS_JOINED,
             CONFIG.max_articles,
