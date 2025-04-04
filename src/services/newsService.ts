@@ -1,7 +1,7 @@
 import { container } from '../configs/ioc';
 import { type BaseRepository, type News } from '../dao/db';
 import { complete } from './aiService';
-import { reducedTemplate } from '../templates/aiTemplates';
+import { initTemplate, reducedTemplate } from '../templates/aiTemplates';
 
 export class NewsService {
     private repository = container.resolve<BaseRepository<News, string>>('repo');
@@ -18,6 +18,10 @@ export class NewsService {
     async getReducedNews(topicsJoined: string, excludeTopicsJoined: string, newsItemLimit: number, aiModel: string): Promise<News[]> {
         const news = await this.getNews();
         return await complete(news, topicsJoined, excludeTopicsJoined, newsItemLimit, aiModel, reducedTemplate);
+    }
+
+    async getRelevantNews(newsItems: News[], excluded_topics: string, topics: string, number: number, aiModel: string): Promise<News[]> {
+        return await complete(newsItems, topics, excluded_topics, number, aiModel, initTemplate);
     }
 
     async saveNews(news: News[]): Promise<void> {

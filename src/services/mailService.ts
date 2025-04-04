@@ -1,7 +1,7 @@
-import { emailConfig } from "../worker.ts";
 import nodemailer from 'nodemailer';
 import { NewsService } from "./newsService.ts";
 import { type News } from "../dao/db.ts";
+import { CONFIG } from "../configs/configProvider.ts";
 
 
 const sendMail = async (to: string, subject: string, html: string) => {
@@ -26,7 +26,7 @@ const sendMail = async (to: string, subject: string, html: string) => {
 export async function sendNews() {
     const newsService = new NewsService();
     const news = await newsService.getNews();
-    const to = emailConfig.subscribers.join(", ");
+    const to = CONFIG.email_notifications.subscribers.join(", ");
     const subject = "News Proposal";
     const html = news.map((n: News) => `<h1>${n.title}</h1><p>${n.url}</p>`).join("<hr>");
     await sendMail(to, subject, html);
