@@ -27,7 +27,7 @@
 
                 <div style="margin-bottom: 1rem;">
                     <label for="newsCount">Select number of news to display:</label>
-                    <input type="number" id="newsCount" min="5" value="5" step="1" style="width: 100px;" />
+                    <input type="number" id="newsCount" min="5" step="1" style="width: 100px;" />
                     <button id="applyFilter" class="btn btn-primary">Apply</button>
                     <button id="resetFilter" class="btn btn-primary">Reset</button>
                     <button id="top5" class="btn btn-primary">TOP 5</button>
@@ -59,20 +59,18 @@
                 alert("Minimum number of news items is 5.");
             }
         };
-
+    
         document.getElementById("resetFilter").onclick = () => {
             window.location.href = window.location.pathname;
         };
-
+    
         document.getElementById("top5").onclick = () => {
             window.location.href = "/?count=5";
         };
-
+    
         const params = new URLSearchParams(window.location.search);
-        const count = params.get("count");
-        if (count) {
-            document.getElementById("newsCount").value = count;
-        }
+        const count = params.get("count") || 5;
+        document.getElementById("newsCount").value = count;
     </script>
 </body>
 
