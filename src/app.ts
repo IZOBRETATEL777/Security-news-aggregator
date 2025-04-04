@@ -1,4 +1,4 @@
-import { NewsComponent } from "./components/News.tsx";
+import { NewsComponent } from "./resources/components/News.tsx";
 import { getNews, reduceNews } from "./worker.ts";
 import { REFRESH_RATE_MINUTES } from "./configs/configProvider.ts";
 import { processor } from "./worker.ts";
