@@ -18,11 +18,13 @@ Return only their IDs.
 `;
 
 export const reducedTemplate = (news: string, topics: string, irrelevantTopics: string, newsItemLimit: number) => `
-Give exactly ${newsItemLimit} news based on the given security topics that are most relevant and important.
+Imagine you are a PR expert. You are given a list of news items and a list of security topics. Your task is to identify the most interesting and relevant news items based on the given topics.
+
+Relevant Topics: ${topics}
 
 News: ${news}
 
-Relevant Topics: ${topics}
+Give exactly ${newsItemLimit} news items.
 
 Return only their IDs.
 `;
