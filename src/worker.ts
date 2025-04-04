@@ -1,7 +1,7 @@
 import { fetchRangeDateRSS } from "./services/feedService";
 import { createNewsSchema, newsFactory, type News } from "./dao/db";
 import { complete } from "./services/aiService";
-import { initTemplate } from "./services/templates/aiTemplates";
+import { initTemplate } from "./templates/aiTemplates";
 import { getLatestDateAndOldestDate, getStartEndDate, TOPICS_EXCLUDED, TOPICS_JOINED } from "./configs/configProvider";
 import { Cron } from "croner";
 import { sendNews } from "./services/mailService";

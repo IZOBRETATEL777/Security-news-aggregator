@@ -1,7 +1,7 @@
 import { container } from '../configs/ioc';
 import { type BaseRepository, type News } from '../dao/db';
 import { complete } from './aiService';
-import { reducedTemplate } from './templates/aiTemplates';
+import { reducedTemplate } from '../templates/aiTemplates';
 
 export class NewsService {
     private repository = container.resolve<BaseRepository<News, string>>('repo');
