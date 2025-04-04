@@ -2,95 +2,97 @@
 <html lang="en">
 
 <head>
-  <meta charSet="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SRE Team News Feed</title>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"
-    integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS"
-    crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
-    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
-    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <link rel="icon" type="image/x-icon"
-    href="data:image/x-icon;base64,...(icon base64 omitted for brevity)...">
+    <meta charSet="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SRE Team News Feed</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"
+        integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,...(icon base64 omitted for brevity)...">
 </head>
 
 <body>
-  <div class="container-fluid px-20">
-    <div class="row m-0">
-      <div class="col p-3 xs-12">
-        <h1 class="text-center mb-4 text-dark">🔐 Latest Cybersecurity News by SRE Team 🧑‍💻</h1>
+    <div class="container-fluid px-20">
+        <div class="row m-0">
+            <div class="col p-3 xs-12">
+                <h1 class="text-center mb-4 text-dark">🔐 Latest Cybersecurity News by SRE Team 🧑‍💻</h1>
 
-        <div style="margin-bottom: 1rem;">
-          <label for="newsCount">Select number of news to display:</label>
-          <input type="number" id="newsCount" min="5" step="1" style="width: 100px;" />
-          <button id="applyFilter" class="btn btn-primary">Apply</button>
-          <button id="resetFilter" class="btn btn-primary">Reset</button>
-          <button id="top5" class="btn btn-primary">TOP 5</button>
+                <div class="d-flex justify-content-between"
+                    style="margin-bottom: 1rem; display: flex; align-items: center;">
+                    <div>
+                        <label for="newsCount">Select number of news to display:</label>
+                        <input type="number" id="newsCount" min="5" step="1" style="width: 100px;" />
+                    </div>
+                    <div>
+                        <button id="applyFilter" class="btn btn-primary">Apply</button>
+                        <button id="resetFilter" class="btn btn-primary">Reset</button>
+                        <button id="top5" class="btn btn-primary">TOP 5</button>
+                        <button id="exportExcel" class="btn btn-success">Export to Excel</button>
+                    </div>
+                </div>
+
+                <table id="newsTable"
+                    class="table table-fixed table-striped table-bordered table-hover table-responsive">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th style="width: 55%">Title</th>
+                            <th style="width: 15%">Keywords</th>
+                            <th style="width: 10%">Date</th>
+                            <th style="width: 5%">Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!--entry-->
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-        <table id="newsTable" class="table table-fixed table-striped table-bordered table-hover table-responsive">
-          <thead class="table-primary text-center">
-            <tr>
-              <th style="width: 55%">Title</th>
-              <th style="width: 15%">Keywords</th>
-              <th style="width: 10%">Date</th>
-              <th style="width: 5%">Link</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!--entry-->
-            <tr>
-              <td>Sample News Title</td>
-              <td><span class="badge">cyber</span> <span class="badge">security</span></td>
-              <td><small class="text-muted">Friday, March 14</small></td>
-              <td><a href="#" target="_blank" class="btn btn-sm btn-primary">Open</a></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="text-right" style="margin-top: 1rem;">
-          <button id="exportExcel" class="btn btn-success">Export to Excel</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    document.getElementById("applyFilter").onclick = () => {
-      const count = document.getElementById("newsCount").value;
-      if (parseInt(count) >= 5) {
-        window.location.href = "/?count=" + count;
-      } else {
-        alert("Minimum number of news items is 5.");
-      }
-    };
+    <script>
+        document.getElementById("applyFilter").onclick = () => {
+            const count = document.getElementById("newsCount").value;
+            if (parseInt(count) >= 5) {
+                window.location.href = "/?count=" + count;
+            } else {
+                alert("Minimum number of news items is 5.");
+            }
+        };
 
-    document.getElementById("resetFilter").onclick = () => {
-      window.location.href = window.location.pathname;
-    };
+        document.getElementById("resetFilter").onclick = () => {
+            window.location.href = window.location.pathname;
+        };
 
-    document.getElementById("top5").onclick = () => {
-      window.location.href = "/?count=5";
-    };
+        document.getElementById("top5").onclick = () => {
+            window.location.href = "/?count=5";
+        };
 
-    const params = new URLSearchParams(window.location.search);
-    const count = params.get("count") || 5;
-    document.getElementById("newsCount").value = count;
+        const params = new URLSearchParams(window.location.search);
+        const count = params.get("count") || 5;
+        document.getElementById("newsCount").value = count;
 
-    document.getElementById("exportExcel").onclick = () => {
-      const table = document.getElementById("newsTable");
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.table_to_sheet(table);
-      XLSX.utils.book_append_sheet(wb, ws, "CyberNews");
-      XLSX.writeFile(wb, "SRE_Team_News.xlsx");
-    };
-  </script>
+        document.getElementById("exportExcel").onclick = () => {
+            const table = document.getElementById("newsTable");
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.table_to_sheet(table);
+            ws['!cols'] = [
+                { wch: 50 }, // Title — 55%
+                { wch: 20 }, // Keywords — 15%
+                { wch: 15 }, // Date — 10%
+                { wch: 10 }, // Link — 5%
+            ];
+            XLSX.utils.book_append_sheet(wb, ws, "CyberNews");
+            XLSX.writeFile(wb, "SRE_Team_News.xlsx");
+        };
+    </script>
 </body>
 
 </html>
