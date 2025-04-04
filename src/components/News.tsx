@@ -1,4 +1,4 @@
-import type { News } from "../src/db";
+import type { News } from "../dao/db";
 
 export type NewsItem = News;
 

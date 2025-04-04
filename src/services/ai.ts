@@ -1,6 +1,6 @@
 import { groq } from "@ai-sdk/groq"
 import { generateObject } from "ai";
-import type { News } from "../db";
+import type { News } from "../dao/db";
 import { z } from "zod";
 
 export const initTemplate = (news: string, topics: string, irrelevantTopics: string, newsItemLimit: number) => `

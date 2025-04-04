@@ -1,5 +1,5 @@
 import { fetchRangeDateRSS } from "./services/rss";
-import { createNewsSchema, newsFactory, type News } from "./db";
+import { createNewsSchema, newsFactory, type News } from "./dao/db";
 import { complete, initTemplate, reducedTemplate } from "./services/ai";
 import { getLatestDateAndOldestDate, getStartEndDate, TOPICS_EXCLUDED, TOPICS_JOINED} from "./configs/configProvider";
 import { Cron } from "croner";
