@@ -47,6 +47,7 @@
                             <th style="width: 15%">Keywords</th>
                             <th style="width: 10%">Date</th>
                             <th style="width: 5%">Link</th>
+                            <th style="display: none">URL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,14 +82,32 @@
 
         document.getElementById("exportExcel").onclick = () => {
             const table = document.getElementById("newsTable");
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.table_to_sheet(table);
-            ws['!cols'] = [
-                { wch: 50 }, // Title — 55%
-                { wch: 20 }, // Keywords — 15%
-                { wch: 15 }, // Date — 10%
-                { wch: 10 }, // Link — 5%
+            const rows = Array.from(table.querySelectorAll("tbody tr"));
+
+            const data = [
+                ["Title", "Keywords", "Date", "URL"]
             ];
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                const title = cells[0].innerText.trim();
+                const keywords = cells[1].innerText.trim();
+                const date = cells[2].innerText.trim();
+                const url = cells[4].innerText.trim();
+
+                data.push([title, keywords, date, url]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            ws['!cols'] = [
+                { wch: 60 }, // Title
+                { wch: 20 }, // Keywords
+                { wch: 15 }, // Date
+                { wch: 50 }, // URL
+            ];
+
+            const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "CyberNews");
             XLSX.writeFile(wb, "SRE_Team_News.xlsx");
         };
