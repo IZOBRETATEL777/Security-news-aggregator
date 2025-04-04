@@ -5,18 +5,19 @@
     <meta charSet="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SRE Team News Feed</title>
+
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"
         integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+        crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
-        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous" />
+        crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,...(icon base64 omitted for brevity)...">
+
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,...">
 </head>
 
 <body>
@@ -47,7 +48,7 @@
                             <th style="width: 15%">Keywords</th>
                             <th style="width: 10%">Date</th>
                             <th style="width: 5%">Link</th>
-                            <th style="display: none">URL</th>
+                            <th hidden>URL</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,29 +58,7 @@
             </div>
         </div>
     </div>
-
     <script>
-        document.getElementById("applyFilter").onclick = () => {
-            const count = document.getElementById("newsCount").value;
-            if (parseInt(count) >= 5) {
-                window.location.href = "/?count=" + count;
-            } else {
-                alert("Minimum number of news items is 5.");
-            }
-        };
-
-        document.getElementById("resetFilter").onclick = () => {
-            window.location.href = window.location.pathname;
-        };
-
-        document.getElementById("top5").onclick = () => {
-            window.location.href = "/?count=5";
-        };
-
-        const params = new URLSearchParams(window.location.search);
-        const count = params.get("count") || 5;
-        document.getElementById("newsCount").value = count;
-
         document.getElementById("exportExcel").onclick = () => {
             const table = document.getElementById("newsTable");
             const rows = Array.from(table.querySelectorAll("tbody tr"));
@@ -90,12 +69,14 @@
 
             rows.forEach(row => {
                 const cells = row.querySelectorAll("td");
+                if (cells.length < 5) return;
+
                 const title = cells[0].innerText.trim();
                 const keywords = cells[1].innerText.trim();
                 const date = cells[2].innerText.trim();
-                const url = cells[4].innerText.trim();
+                const url = cells[4].innerText.trim(); // hidden column
 
-                data.push([title, keywords, date, url]);
+                data.push([title, keywords, date, { f: `HYPERLINK("${url}", "Open link")` }]);
             });
 
             const ws = XLSX.utils.aoa_to_sheet(data);
