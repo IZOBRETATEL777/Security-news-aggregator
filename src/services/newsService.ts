@@ -1,7 +1,7 @@
 import { symbol } from 'zod';
 import { container } from '../configs/ioc';
 import { type BaseRepository, type News } from '../dao/db';
-import { reducedTemplate, complete } from './ai';
+import { reducedTemplate, complete } from './aiService';
 
 export class NewsService {
     private repository = container.resolve<BaseRepository<News, string>>('repo');
