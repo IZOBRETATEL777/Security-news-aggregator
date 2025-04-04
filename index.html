@@ -64,7 +64,7 @@
             const rows = Array.from(table.querySelectorAll("tbody tr"));
 
             const data = [
-                ["Title", "Keywords", "Date", "URL"]
+                ["🔐 TITLE", "🗝️ KEYWORDS", "📅 DATE", "🔗 URL"]
             ];
 
             rows.forEach(row => {
@@ -76,34 +76,26 @@
                 const date = cells[2].innerText.trim();
                 const url = cells[4].innerText.trim();
 
-                data.push([title, keywords, date, { f: `HYPERLINK("${url}", "Open link")` }]);
+                data.push([
+                    title,
+                    keywords,
+                    date,
+                    { f: `HYPERLINK("${url}", "Open 🔗")` }
+                ]);
             });
 
-            const ws = XLSX.utils.aoa_to_sheet(data);
+            const ws = XLSX.utils.aoa_to_sheet([]);
+            XLSX.utils.sheet_add_aoa(ws, data);
 
             ws['!cols'] = [
                 { wch: 80 },
                 { wch: 40 },
                 { wch: 20 },
-                { wch: 20 }
+                { wch: 25 }
             ];
-
-            const headerStyle = {
-                font: { bold: true, color: { rgb: "FFFFFF" } },
-                fill: { fgColor: { rgb: "4F81BD" } },
-                alignment: { horizontal: "center", vertical: "center" }
-            };
-
-            const headers = ['A1', 'B1', 'C1', 'D1'];
-            headers.forEach(cell => {
-                if (ws[cell]) {
-                    ws[cell].s = headerStyle;
-                }
-            });
 
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "CyberNews");
-
             XLSX.writeFile(wb, "SRE_Team_News.xlsx");
         };
     </script>
