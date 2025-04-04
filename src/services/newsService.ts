@@ -20,8 +20,8 @@ export class NewsService {
         return await complete(news, topicsJoined, excludeTopicsJoined, newsItemLimit, aiModel, reducedTemplate);
     }
 
-    async getRelevantNews(newsItems: News[], excluded_topics: string, topics: string, number: number, aiModel: string): Promise<News[]> {
-        return await complete(newsItems, topics, excluded_topics, number, aiModel, initTemplate);
+    async getRelevantNews(excluded_topics: string, topics: string, number: number, aiModel: string): Promise<News[]> {
+        return await complete(await this.getNews(), topics, excluded_topics, number, aiModel, initTemplate);
     }
 
     async saveNews(news: News[]): Promise<void> {
