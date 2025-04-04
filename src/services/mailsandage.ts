@@ -1,7 +1,7 @@
 import { emailConfig } from "../worker.ts";
 import nodemailer from 'nodemailer';
 import { NewsService } from "./newsService.ts";
-import { type News } from "../db.ts";
+import { type News } from "../dao/db.ts";
 
 
 const sendMail = async (to: string, subject: string, html: string) => {

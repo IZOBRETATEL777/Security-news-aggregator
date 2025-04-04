@@ -1,6 +1,6 @@
 import { symbol } from 'zod';
 import { container } from '../configs/ioc';
-import { type BaseRepository, type News } from '../db';
+import { type BaseRepository, type News } from '../dao/db';
 import { reducedTemplate, complete } from './ai';
 
 export class NewsService {

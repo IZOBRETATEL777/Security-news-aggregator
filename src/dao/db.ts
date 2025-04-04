@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { z } from "zod";
-import { container } from "./configs/ioc";
+import { container } from "../configs/ioc";
 
 export const kv = Redis.fromEnv();
 

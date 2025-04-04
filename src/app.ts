@@ -1,8 +1,8 @@
-import { NewsComponent } from "../../components/News.tsx";
-import { getNews, reduceNews } from "./../worker.ts";
-import { REFRESH_RATE_MINUTES } from "./../configs/configProvider.ts";
-import { processor } from "./../worker.ts";
-const entry = await Bun.file('./index.html').text();
+import { NewsComponent } from "./components/News.tsx";
+import { getNews, reduceNews } from "./worker.ts";
+import { REFRESH_RATE_MINUTES } from "./configs/configProvider.ts";
+import { processor } from "./worker.ts";
+const entry = await Bun.file('../resources/index.html').text();
 const [part1, part2] = entry.split("<!--entry-->");
 
 processor();
