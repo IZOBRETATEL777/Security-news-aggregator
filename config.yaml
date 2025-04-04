@@ -66,6 +66,11 @@ data_period:
   #   endDate: 2025-03-03
   previous_week
 
+email_notifications:
+  enabled: false
+  subscribers:
+    - "roman.tolstosheyev.std@bhos.edu.az"
+  cron: "21 17 * * 3"
 
 max_articles: 20
 ai_model: "deepseek-r1-distill-llama-70b"
