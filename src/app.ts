@@ -9,12 +9,12 @@ await processor();
 setInterval(processor, 1000 * 60 * REFRESH_RATE_MINUTES);
 
 const server = Bun.serve({
-    idleTimeout: 20,
+    idleTimeout: 255,
     async fetch(req) {
         const url = new URL(req.url);
-        const path = url.pathname;
+        const path = decodeURIComponent(url.pathname);
 
-        // 1. Health check route
+        // Health check
         if (path === "/health") {
             return Response.json({
                 status: "ok",
@@ -22,52 +22,59 @@ const server = Bun.serve({
             });
         }
 
-        // 2. Main HTML route with news streaming
+        // Main page with news
         if (path === "/") {
             const count = parseInt(url.searchParams.get("count") || "0");
 
             const readableStream = new ReadableStream({
                 async start(controller) {
-                    controller.enqueue(part1);
-                    controller.enqueue(`<tbody id="news-body">`);
-                    controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
+                    try {
+                        controller.enqueue(part1);
+                        controller.enqueue(`<tbody id="news-body">`);
+                        controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
 
-                    let newsComponent: string[];
-                    if (count >= 5) {
-                        newsComponent = NewsComponent({ news: await reduceNews(count) });
-                    } else {
-                        newsComponent = NewsComponent({ news: await getNews() });
+                        const news = count >= 5 ? await reduceNews(count) : await getNews();
+                        const html = NewsComponent({ news });
+
+                        controller.enqueue(html.join(''));
+                        controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
+                        controller.enqueue(`<script>document.getElementById("newsCount").value = ${html.length};</script>`);
+                        controller.enqueue(`</tbody>`);
+                        controller.enqueue(part2);
+                        controller.close();
+                    } catch (error) {
+                        console.error("Stream error:", error);
+                        controller.enqueue(`<tr><td colspan="100%">Error loading news.</td></tr>`);
+                        controller.enqueue(part2);
+                        controller.close();
                     }
-
-                    controller.enqueue(newsComponent.join(''));
-                    controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
-                    controller.enqueue(`<script>document.getElementById("newsCount").value = ${newsComponent.length};</script>`);
-                    controller.enqueue(`</tbody>`);
-                    controller.enqueue(part2);
-                    controller.close();
                 }
             });
 
             return new Response(readableStream, {
                 headers: {
                     "Content-Type": "text/html",
-                    "Cache-Control": "no-cache"
-                }
+                    "Cache-Control": "no-cache",
+                },
             });
         }
 
-        // 3. Static file handling (e.g., index.js, styles.css)
+        // Static files from /src/resources/*
         try {
-            const file = Bun.file(`src/resources${path}`);
+            const safePath = path.replace(/\.\./g, "");
+            const filePath = `src/resources${safePath}`;
+            const file = Bun.file(filePath);
+
             if (!(await file.exists())) throw new Error("Not Found");
 
             return new Response(file, {
                 headers: {
-                    "Content-Type": getContentType(path),
+                    "Content-Type": getContentType(filePath),
                     "Cache-Control": "max-age=3600"
                 }
             });
-        } catch {
+        } catch (e) {
+            console.warn(`404: ${path}`);
             return new Response("Not Found", { status: 404 });
         }
     },
@@ -77,10 +84,6 @@ function getContentType(path: string): string {
     if (path.endsWith(".js")) return "application/javascript";
     if (path.endsWith(".css")) return "text/css";
     if (path.endsWith(".html")) return "text/html";
-    if (path.endsWith(".json")) return "application/json";
-    if (path.endsWith(".svg")) return "image/svg+xml";
-    if (path.endsWith(".png")) return "image/png";
-    if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
     return "application/octet-stream";
 }
 
