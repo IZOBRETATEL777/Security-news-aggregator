@@ -1,6 +1,6 @@
 import { parse } from "yaml";
 import dayjs from 'dayjs';
-import { yamlSchema } from "./schema";
+import { yamlSchema } from "../templates/configVallidationTemplate";
 
 const configPath = "./config.yaml";
 const buffer = await Bun.file(configPath).text();
