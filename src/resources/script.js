@@ -37,3 +37,24 @@ document.getElementById("exportExcel").onclick = () => {
     XLSX.utils.book_append_sheet(wb, ws, "CyberNews");
     XLSX.writeFile(wb, "SRE_Team_News.xlsx");
 };
+
+document.getElementById("applyFilter").onclick = () => {
+    const count = document.getElementById("newsCount").value;
+    if (parseInt(count) >= 5) {
+        window.location.href = "/?count=" + count;
+    } else {
+        alert("Minimum number of news items is 5.");
+    }
+};
+
+document.getElementById("resetFilter").onclick = () => {
+    window.location.href = window.location.pathname;
+};
+
+document.getElementById("top5").onclick = () => {
+    window.location.href = "/?count=5";
+};
+
+const params = new URLSearchParams(window.location.search);
+const count = params.get("count") || 5;
+document.getElementById("newsCount").value = count;
