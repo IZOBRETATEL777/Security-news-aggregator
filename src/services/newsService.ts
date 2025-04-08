@@ -28,6 +28,12 @@ export class NewsService {
         await this.repository.saveNews(news);
     }
 
+    async setNews(news: News[]): Promise<void> {
+        await this.deleteAllNews();
+        await this.saveNews(news);
+    }
+        
+
     async deleteAllNews(): Promise<void> {
         await this.repository.deleteNewsIndex();
     }

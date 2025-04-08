@@ -5,7 +5,7 @@ import { processor } from "./workers/worker.ts";
 const entry = await Bun.file('src/resources/index.html').text();
 const [part1, part2] = entry.split("<!--entry-->");
 
-processor();
+await processor();
 setInterval(processor, 1000 * 60 * REFRESH_RATE_MINUTES);
 
 
