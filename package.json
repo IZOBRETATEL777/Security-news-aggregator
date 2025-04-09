@@ -8,8 +8,8 @@
     "@types/react-dom": "^19.0.4"
   },
   "scripts": {
-    "start": "bun run src/controllers/index.ts",
-    "dev": "bun run --watch src/controllers/index.ts"
+    "start": "bun run src/app.ts",
+    "dev": "bun run --watch src/app.ts"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { z } from "zod";
-import { container } from "./configs/ioc";
+import { container } from "../configs/ioc";
 
 export const kv = Redis.fromEnv();
 
@@ -74,6 +74,7 @@ export class KVRepository implements BaseRepository<News, string> {
     }
 
     async saveNews(news: News[]): Promise<void> {
+        if (news.length === 0) return;
         const newsData = news.reduce((acc, item) => {
             acc[item.id] = JSON.stringify(item);
             return acc;
