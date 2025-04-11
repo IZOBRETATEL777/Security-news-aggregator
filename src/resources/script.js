@@ -11,13 +11,13 @@ document.getElementById("exportExcel").onclick = () => {
         if (cells.length < 5) return;
 
         const title = cells[0].innerText.trim();
-        const keywords = cells[1].innerText.trim();
-        const date = cells[2].innerText.trim();
-        const url = cells[4].innerText.trim();
+        const summary = cells[2].innerText.trim();
+        const date = cells[3].innerText.trim();
+        const url = cells[5].innerText.trim();
 
         data.push([
             title,
-            keywords,
+            summary,
             date,
             { f: `HYPERLINK("${url}", "Open 🔗")` }
         ]);
@@ -28,7 +28,7 @@ document.getElementById("exportExcel").onclick = () => {
 
     ws['!cols'] = [
         { wch: 80 },
-        { wch: 40 },
+        { wch: 80 },
         { wch: 20 },
         { wch: 25 }
     ];
