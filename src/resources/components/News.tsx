@@ -6,7 +6,7 @@ interface NewsProps {
   news: NewsItem[];
 }
 
-export function NewsComponent({ news }: NewsProps) {
+export function NewsComponent({ news }: NewsProps, isSummary: boolean) {
   return news
     .map((e) => ({ ...e, published: new Date(e.published) }))
     .map((item) => {
@@ -27,6 +27,7 @@ export function NewsComponent({ news }: NewsProps) {
           )
           .join(" ")}
           </td>
+          <td class="word-break" ${!isSummary ? "hidden" : ""} >${item.summary}</td>
           <td class="word-break">
             <div class="p-2 bg-light border rounded text-center">
               <small class="text-muted">${formattedDate}</small>

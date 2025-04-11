@@ -10,6 +10,7 @@ export const newsSchema = z.object({
     url: z.string().url(),
     published: z.date(),
     keywords: z.array(z.string()).default([]),
+    summary: z.string().optional(),
 });
 
 export function sort(a: News, b: News) {
