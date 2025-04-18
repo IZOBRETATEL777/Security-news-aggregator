@@ -46,18 +46,21 @@ window.addEventListener("load", () => {
         const headers = includeSummary
             ? ["Title", "Summary", "Date", "URL"]
             : ["Title", "Keywords", "Date", "URL"];
-        const data = [headers];
-        console.log(data);
+
+        const data = [];
 
         rows.forEach(row => {
             const cells = row.querySelectorAll("td");
 
-            const title = cells[0]?.innerText.trim() || "No title";
+            // Ensure row is well-formed
+            if (cells.length < 6) return;
+
+            const title = cells[0].innerText.trim() || "No title";
             const middleCol = includeSummary
-                ? (cells[2]?.innerText.trim() || "No summary")
-                : (cells[1]?.innerText.trim() || "No keywords");
-            const date = cells[3]?.innerText.trim() || "No date";
-            const url = cells[5]?.innerText.trim() || "";
+                ? (cells[2].innerText.trim() || "No summary")
+                : (cells[1].innerText.trim() || "No keywords");
+            const date = cells[3].innerText.trim() || "No date";
+            const url = cells[5].innerText.trim() || "";
 
             data.push([
                 title,
@@ -66,6 +69,16 @@ window.addEventListener("load", () => {
                 { f: `HYPERLINK("${url}", "Open")` }
             ]);
         });
+
+        // Sanity check
+        if (!Array.isArray(data) || !Array.isArray(data[0])) {
+            console.error("Invalid data format", data);
+            alert("Export failed: Data format is incorrect.");
+            return;
+        }
+
+        // Insert headers at the top
+        data.unshift(headers);
 
         const ws = XLSX.utils.aoa_to_sheet(data);
 
@@ -78,7 +91,7 @@ window.addEventListener("load", () => {
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, includeSummary ? "CyberNews_Summary" : "CyberNews_Keywords");
-        XLSX.writeFile(wb, "SRE_Team_News.xlsx");
+        XLSX.writeFile(wb, "Security_News.xlsx");
     };
 
     applyFilterBtn.onclick = () => {
