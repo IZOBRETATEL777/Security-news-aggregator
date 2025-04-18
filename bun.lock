@@ -5,7 +5,7 @@
       "name": "security-news-aggregator",
       "dependencies": {
         "@ai-sdk/groq": "^1.1.11",
-        "@rowanmanning/feed-parser": "^2.0.1",
+        "@rowanmanning/feed-parser": "^2.0.2",
         "@types/nodemailer": "^6.4.17",
         "@upstash/redis": "^1.34.4",
         "ai": "^4.1.51",
@@ -136,7 +136,7 @@
 
     "@restart/ui": ["@restart/ui@1.9.4", "", { "dependencies": { "@babel/runtime": "^7.26.0", "@popperjs/core": "^2.11.8", "@react-aria/ssr": "^3.5.0", "@restart/hooks": "^0.5.0", "@types/warning": "^3.0.3", "dequal": "^2.0.3", "dom-helpers": "^5.2.0", "uncontrollable": "^8.0.4", "warning": "^4.0.3" }, "peerDependencies": { "react": ">=16.14.0", "react-dom": ">=16.14.0" } }, "sha512-N4C7haUc3vn4LTwVUPlkJN8Ach/+yIMvRuTVIhjilNHqegY60SGLrzud6errOMNJwSnmYFnt1J0H/k8FE3A4KA=="],
 
-    "@rowanmanning/feed-parser": ["@rowanmanning/feed-parser@2.0.1", "", { "dependencies": { "fast-xml-parser": "^5.0.8", "html-entities": "^2.3.3" } }, "sha512-p1waaLRRxtzvhhSTZKUvapJmnQ/eneUfq9Y0Giy5khZUR3UX/etIfUG4AFUd/+DE8B932TbWvQLRhSGB8N/Iuw=="],
+    "@rowanmanning/feed-parser": ["@rowanmanning/feed-parser@2.0.2", "", { "dependencies": { "fast-xml-parser": "^5.0.8", "html-entities": "^2.3.3" } }, "sha512-8ezh7gWosOKWCHm11izzbj+hZfz4v+iVqDANjz7R7S2iCeuMG//UbFTIUMbYTVYuSfGsr2RCLU6Xta1WVdrwBw=="],
 
     "@sveltejs/acorn-typescript": ["@sveltejs/acorn-typescript@1.0.5", "", { "peerDependencies": { "acorn": "^8.9.0" } }, "sha512-IwQk4yfwLdibDlrXVE04jTZYlLnwsTT2PIOQQGNLWfjavGifnk1JD1LcZjZaBTRcxZu2FfPfNLOE04DSu9lqtQ=="],
 
