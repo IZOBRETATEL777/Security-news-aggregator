@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Deploy to Environment
 
 on:
   workflow_run:
@@ -10,6 +10,7 @@ jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -22,8 +23,16 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
+      - name: Determine Webhook
+        id: set-webhook
+        run: |
+          echo "Branch ref: ${{ github.event.workflow_run.head_branch }}"
+          if [[ "${{ github.event.workflow_run.head_branch }}" == "develop" ]]; then
+            echo "WEBHOOK_URL=${{ secrets.RENDER_WEBHOOK_DEPLOY_TEST }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "WEBHOOK_URL=${{ secrets.RENDER_WEBHOOK_DEPLOY }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Trigger Deployment Webhook
         run: |
-          curl $WEBHOOK_SECRET
-        env:
-          WEBHOOK_SECRET: ${{ secrets.RENDER_WEBHOOK_DEPLOY }}
+          curl ${{ steps.set-webhook.outputs.WEBHOOK_URL }}
