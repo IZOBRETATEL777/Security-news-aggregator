@@ -29,7 +29,13 @@ RUN apt-get update && \
     libpango-1.0-0 \
     libcairo2 \
     libasound2 \
-    libatspi2.0-0 && \
+    libatspi2.0-0 \
+    libx11-xcb1 \
+    libxcursor1 \
+    libgtk-3-0 \
+    libpangocairo-1.0-0 \
+    libcairo-gobject2 \
+    libgdk-pixbuf-2.0-0 && \
     apt-get clean
 
 RUN useradd -ms /bin/bash bunuser
