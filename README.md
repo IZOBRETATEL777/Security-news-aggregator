@@ -1,7 +1,7 @@
-# SRE Team News Feed
+# Security News Feed
 
 ## Overview
-**SRE Team News Feed** is a **news aggregator** designed to fetch cybersecurity news from various sources, filter topics based on relevance, and deliver curated content. It processes RSS feeds, applies AI-based filtering, and uses Redis for storage.
+**Security News Feed** is a **news aggregator** designed to fetch cybersecurity news from various sources, filter topics based on relevance, and deliver curated content. It processes RSS feeds, applies AI-based filtering, and uses Redis for storage.
 
 ---
 

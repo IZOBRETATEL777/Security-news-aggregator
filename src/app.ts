@@ -1,6 +1,7 @@
 import { NewsComponent } from "./resources/components/News.tsx";
 import { getNews, reduceNews, processor } from "./workers/worker.ts";
 import { REFRESH_RATE_MINUTES } from "./configs/configProvider.ts";
+import { enrichNewsWithSummaries } from "./services/scrapingService.ts";
 
 const entry = await Bun.file('src/resources/index.html').text();
 const [part1, part2] = entry.split("<!--entry-->");
@@ -25,6 +26,7 @@ const server = Bun.serve({
         // Main page with news
         if (path === "/") {
             const count = parseInt(url.searchParams.get("count") || "0");
+            const isSummary = url.searchParams.get("summary") === "true";
 
             const readableStream = new ReadableStream({
                 async start(controller) {
@@ -33,8 +35,16 @@ const server = Bun.serve({
                         controller.enqueue(`<tbody id="news-body">`);
                         controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
 
-                        const news = count >= 5 ? await reduceNews(count) : await getNews();
-                        const html = NewsComponent({ news });
+
+
+                        let news: any[] = [];
+                        news = count >= 5 ? await reduceNews(count) : await getNews();
+                        if (isSummary && news.length >= 5) {
+                            console.log("Enriching news with summaries...");
+                            news = await enrichNewsWithSummaries(news);
+                        }
+
+                        const html = NewsComponent({ news }, isSummary);
 
                         controller.enqueue(html.join(''));
                         controller.enqueue(`<script>document.getElementById("loader").remove();</script>`);
