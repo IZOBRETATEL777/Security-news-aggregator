@@ -1,8 +1,7 @@
 FROM ubuntu:22.04
 
-RUN useradd -ms /bin/bash bunuser
 
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+RUN apt-get update && \
     apt-get install -y \
     nodejs \
     git \
@@ -15,7 +14,16 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     ca-certificates \
     && apt-get clean
 
+RUN useradd -ms /bin/bash bunuser
 USER bunuser
+
+ENV NODE_VERSION=20
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION"
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash
+
 ENV HOME=/home/bunuser
 ENV BUN_INSTALL=$HOME/.bun
 ENV PATH="$BUN_INSTALL/bin:$PATH"
