@@ -22,8 +22,6 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | b
 ENV NVM_DIR=/home/bunuser/.nvm
 RUN bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION"
 
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash
-
 ENV HOME=/home/bunuser
 ENV BUN_INSTALL=$HOME/.bun
 ENV PATH="$BUN_INSTALL/bin:$PATH"
