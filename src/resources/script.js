@@ -43,9 +43,11 @@ window.addEventListener("load", () => {
         }
 
         const includeSummary = summary;
-        const data = includeSummary
+        const headers = includeSummary
             ? ["Title", "Summary", "Date", "URL"]
             : ["Title", "Keywords", "Date", "URL"];
+        const data = [headers];
+        console.log(data);
 
         rows.forEach(row => {
             const cells = row.querySelectorAll("td");
