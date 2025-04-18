@@ -8,7 +8,7 @@
     "@types/react-dom": "^19.0.4"
   },
   "scripts": {
-    "start": "bun run src/app.ts",
+    "start": "bunx playwright install && bun run src/app.ts",
     "dev": "bun run --watch src/app.ts"
   },
   "peerDependencies": {
@@ -23,7 +23,9 @@
     "bootstrap": "^5.3.3",
     "croner": "^9.0.0",
     "dayjs": "^1.11.13",
+    "llm-scraper": "^1.5.1",
     "nodemailer": "^6.10.0",
+    "playwright": "^1.51.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
