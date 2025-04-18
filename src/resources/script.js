@@ -44,8 +44,8 @@ window.addEventListener("load", () => {
 
         const includeSummary = summary;
         const headers = includeSummary
-            ? ["Title", "Summary", "Date", "URL"]
-            : ["Title", "Keywords", "Date", "URL"];
+            ? ["TITLE", "SUMMARY", "DATE", "URL"]
+            : ["TITLE", "KEYWORDS", "DATE", "URL"];
 
         const data = [];
 
