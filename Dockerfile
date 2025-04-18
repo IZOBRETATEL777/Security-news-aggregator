@@ -2,22 +2,23 @@ FROM ubuntu:22.04
 
 RUN useradd -ms /bin/bash bunuser
 
-RUN apt-get update && apt-get install -y \
-    curl \
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y \
+    nodejs \
     git \
+    curl \
     build-essential \
     cmake \
     libgomp1 \
-    nodejs \
-    npm \
     unzip \
     xz-utils \
     ca-certificates \
     && apt-get clean
 
 USER bunuser
-ENV BUN_INSTALL=/home/bunuser/.bun
-ENV PATH="${BUN_INSTALL}/bin:${PATH}"
+ENV HOME=/home/bunuser
+ENV BUN_INSTALL=$HOME/.bun
+ENV PATH="$BUN_INSTALL/bin:$PATH"
 
 RUN curl -fsSL https://bun.sh/install | bash
 
