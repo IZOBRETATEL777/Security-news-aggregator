@@ -2,6 +2,8 @@ FROM oven/bun:latest
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y git
+
 COPY package.json bun.lock ./
 RUN bun install
 
