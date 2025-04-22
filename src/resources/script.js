@@ -108,7 +108,7 @@ window.addEventListener("load", () => {
     };
 
     top5Btn.onclick = () => {
-        window.location.href = "/?count=5";
+        window.location.href = "/?summary=true&count=5";
     };
 
     getSummaryBtn.onclick = () => {
