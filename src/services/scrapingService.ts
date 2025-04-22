@@ -31,6 +31,10 @@ export async function enrichNewsWithSummaries(newsItems: News[]): Promise<News[]
     const enrichedNews: News[] = [];
 
     for (const item of newsItems) {
+        if (item.summary) {
+            enrichedNews.push(item);
+            continue;
+        }
         try {
             const page = await context.newPage();
             await page.goto(item.url, { waitUntil: "domcontentloaded" });
