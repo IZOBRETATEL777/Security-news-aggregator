@@ -38,7 +38,7 @@ export async function enrichNewsWithSummaries(newsItems: News[]): Promise<News[]
         try {
             const page = await context.newPage();
             await page.goto(item.url, { waitUntil: "domcontentloaded" });
-            await page.waitForTimeout(5000);
+            await page.waitForTimeout(CONFIG.request_rate_mseconds);
             const { data } = await scraper.run(page, summarySchema, {
                 format: "text",
                 prompt: "Give me a 3-sentence summary (blurb) of the following article.",
