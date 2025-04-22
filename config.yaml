@@ -75,4 +75,4 @@ email_notifications:
 max_articles: 20
 ai_model: "deepseek-r1-distill-llama-70b"
 refresh_rate_minutes: 1440 # 24 hours
-request_rate_mseconds: 100
+request_rate_mseconds: 3000
