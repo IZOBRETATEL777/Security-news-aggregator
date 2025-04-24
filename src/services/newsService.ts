@@ -2,6 +2,7 @@ import { container } from '../configs/ioc';
 import { type BaseRepository, type News } from '../dao/db';
 import { complete } from './aiService';
 import { initTemplate, reducedTemplate } from '../templates/aiTemplates';
+import { enrichNewsWithSummaries } from "../services/scrapingService";
 
 export class NewsService {
     private repository = container.resolve<BaseRepository<News, string>>('repo');
@@ -37,6 +38,13 @@ export class NewsService {
     async deleteAllNews(): Promise<void> {
         await this.repository.deleteNewsIndex();
     }
+
+    async enrichNewsWithSummaries(newsItems: News[]): Promise<News[]> {
+        const enrichedNews = await enrichNewsWithSummaries(newsItems);
+        await this.repository.saveNews(enrichedNews);
+        return enrichedNews;
+    }
+
 }
 
 container.register(NewsService.name, new NewsService());
