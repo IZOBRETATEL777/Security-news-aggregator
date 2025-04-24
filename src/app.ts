@@ -1,6 +1,6 @@
 import { NewsComponent } from "./resources/components/News.tsx";
 import { getNews, reduceNews, processor } from "./workers/newsFetcher.ts";
-import { fetchSummary } from "./workers/summaryMaker.ts";
+import { fetchNSummary, fetchSummary } from "./workers/summaryMaker.ts";
 import { REFRESH_RATE_MINUTES } from "./configs/configProvider.ts";
 import type { News } from "./dao/db.ts";
 
@@ -40,7 +40,7 @@ const server = Bun.serve({
                         let news: News[] = [];
                         news = count >= 5 ? await reduceNews(count) : await getNews();
                         if (isSummary && news.length >= 5) {
-                            news = await fetchSummary();
+                            news = await fetchNSummary(news);
                         }
 
                         const html = NewsComponent({ news }, isSummary);
