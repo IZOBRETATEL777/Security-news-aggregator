@@ -13,7 +13,7 @@
         "croner": "^9.0.0",
         "dayjs": "^1.11.13",
         "llm-scraper": "^1.5.1",
-        "nodemailer": "^6.10.0",
+        "nodemailer": "^6.10.1",
         "playwright": "^1.52.0",
         "react": "^19.0.0",
         "react-bootstrap": "^2.10.9",
@@ -448,7 +448,7 @@
 
     "node-llama-cpp": ["node-llama-cpp@2.8.16", "", { "dependencies": { "chalk": "^5.3.0", "chmodrp": "^1.0.2", "cli-progress": "^3.12.0", "cmake-js": "^7.2.1", "cross-env": "^7.0.3", "cross-spawn": "^7.0.3", "env-var": "^7.3.1", "fs-extra": "^11.1.1", "log-symbols": "^5.1.0", "node-addon-api": "^7.0.0", "octokit": "^3.1.0", "ora": "^7.0.1", "simple-git": "^3.19.1", "uuid": "^9.0.0", "which": "^4.0.0", "yargs": "^17.7.2" }, "peerDependencies": { "typescript": ">=5.0.0" }, "optionalPeers": ["typescript"], "bin": { "node-llama-cpp": "dist/cli/cli.js" } }, "sha512-Tcb6a/q+uoJg9od8sncsYf+I0AK0qw7kVaf7ogFY/MndWiEQBO+zzjWuCs+a4zMq5Xa2EzULaMrofs//7nkt8A=="],
 
-    "nodemailer": ["nodemailer@6.10.0", "", {}, "sha512-SQ3wZCExjeSatLE/HBaXS5vqUOQk6GtBdIIKxiFdmm01mOQZX/POJkO3SUX1wDiYcwUOJwT23scFSC9fY2H8IA=="],
+    "nodemailer": ["nodemailer@6.10.1", "", {}, "sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA=="],
 
     "npmlog": ["npmlog@6.0.2", "", { "dependencies": { "are-we-there-yet": "^3.0.0", "console-control-strings": "^1.1.0", "gauge": "^4.0.3", "set-blocking": "^2.0.0" } }, "sha512-/vBvz5Jfr9dT/aFWd0FIRf+T/Q2WBsLENygUaFUqstqsycmZAP/t5BvFJTK0viFmSUxiUKTUplWy5vt+rvKIxg=="],
 
