@@ -1,13 +1,15 @@
 import { NewsComponent } from "./resources/components/News.tsx";
-import { getNews, reduceNews, processor } from "./workers/worker.ts";
+import { getNews, reduceNews, processor } from "./workers/newsFetcher.ts";
+import { fetchNSummary, fetchSummary } from "./workers/summaryMaker.ts";
 import { REFRESH_RATE_MINUTES } from "./configs/configProvider.ts";
-import { enrichNewsWithSummaries } from "./services/scrapingService.ts";
+import type { News } from "./dao/db.ts";
 
 const entry = await Bun.file('src/resources/index.html').text();
 const [part1, part2] = entry.split("<!--entry-->");
 
 await processor();
 setInterval(processor, 1000 * 60 * REFRESH_RATE_MINUTES);
+setInterval(fetchSummary, 1000 * 60 * REFRESH_RATE_MINUTES);
 
 const server = Bun.serve({
     idleTimeout: 255,
@@ -35,13 +37,10 @@ const server = Bun.serve({
                         controller.enqueue(`<tbody id="news-body">`);
                         controller.enqueue(`<tr id="loader"><td>Loading...</td></tr>`);
 
-
-
-                        let news: any[] = [];
+                        let news: News[] = [];
                         news = count >= 5 ? await reduceNews(count) : await getNews();
                         if (isSummary && news.length >= 5) {
-                            console.log("Enriching news with summaries...");
-                            news = await enrichNewsWithSummaries(news);
+                            news = await fetchNSummary(news);
                         }
 
                         const html = NewsComponent({ news }, isSummary);

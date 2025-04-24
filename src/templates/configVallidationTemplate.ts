@@ -18,6 +18,7 @@ export const yamlSchema = z.object({
     max_articles: z.number().int().positive().optional().default(20),
     ai_model: z.string().optional().default("deepseek-r1-distill-llama-70b"),
     refresh_rate_minutes: z.number().int().positive().optional().default(60),
+    request_rate_mseconds: z.number().int().positive().optional().default(1000),
 
     email_notifications: z.object({
         enabled: z.boolean(),

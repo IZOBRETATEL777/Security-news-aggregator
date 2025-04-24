@@ -1,7 +1,7 @@
 feeds:
   - https://www.bleepingcomputer.com/feed/
   - https://www.securitymagazine.com/rss/15
-  - https://packetstorm.news/rss/news
+  # - https://packetstorm.news/rss/news
   - https://hnrss.org/frontpage
   - https://cybersecuritynews.com/feed/
   # - https://www.cert.europa.eu/publications/security-advisories-rss
@@ -75,3 +75,4 @@ email_notifications:
 max_articles: 20
 ai_model: "deepseek-r1-distill-llama-70b"
 refresh_rate_minutes: 1440 # 24 hours
+request_rate_mseconds: 3000
