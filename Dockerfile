@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.52.0-jammy
+FROM mcr.microsoft.com/playwright:v1.55.0-jammy
 
 
 RUN apt-get update && apt-get install -y curl unzip xz-utils git && apt-get clean
